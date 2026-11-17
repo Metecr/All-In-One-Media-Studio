@@ -1,0 +1,46 @@
+{
+  "name": "all-in-one-media-studio",
+  "productName": "All In One",
+  "version": "2.0.0",
+  "description": "All In One — Media Studio (Video & Ses İndirici, Dönüştürücü, 4K Thumbnail, SRT Stüdyosu, Ses Efekti ve AI Whisper .SRT)",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist:win": "electron-builder --win portable --x64",
+    "dist:mac": "electron-builder --mac zip"
+  },
+  "dependencies": {
+    "electron-updater": "^6.3.9"
+  },
+  "devDependencies": {
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "com.allinone.mediastudio",
+    "productName": "All In One",
+    "files": [
+      "index.html",
+      "manifest.json",
+      "sw.js",
+      "main.js",
+      "package.json"
+    ],
+    "win": {
+      "target": "portable",
+      "artifactName": "VideoIndirici.exe"
+    },
+    "mac": {
+      "target": "zip",
+      "artifactName": "VideoIndirici-macOS.zip"
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "Metecr",
+        "repo": "All-In-One-Media-Studio",
+        "releaseType": "release"
+      }
+    ]
+  }
+}

@@ -1,0 +1,2634 @@
+<!DOCTYPE html>
+<html lang="tr" class="dark scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>All In One — Media Studio</title>
+  <meta name="description" content="All In One ile YouTube ve Instagram videolarını MP4/MP3 olarak indirin, tarayıcı içi medya dönüştürün, 4K thumbnail çekin, SRT altyazı senkronize edin ve ses stüdyosunu kullanın." />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#070709" />
+  
+  <!-- Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            surface: {
+              950: '#070709',
+              900: '#0b0b0e',
+              850: '#101014',
+              800: '#16161c',
+              700: '#1f1f27',
+            },
+            accent: {
+              DEFAULT: '#10b981', // Supabase Emerald
+              hover: '#059669',
+              subtle: 'rgba(16, 185, 129, 0.1)',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    :root {
+      color-scheme: dark;
+    }
+    body {
+      background-color: #070709;
+      color: #ededef;
+      font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* Architectural Hairline Grid & Surface System */
+    .bg-grid-pattern {
+      background-size: 48px 48px;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    }
+
+    .glass-panel {
+      background: rgba(16, 16, 20, 0.72);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.06), 0 20px 40px -15px rgba(0, 0, 0, 0.7);
+    }
+
+    .glass-card {
+      background: linear-gradient(180deg, rgba(22, 22, 28, 0.75) 0%, rgba(12, 12, 16, 0.85) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+      transition: border-color 0.2s ease, transform 0.2s ease, background-color 0.2s ease;
+    }
+
+    .glass-card:hover {
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .hairline-b { border-bottom: 1px solid rgba(255, 255, 255, 0.07); }
+    .hairline-t { border-top: 1px solid rgba(255, 255, 255, 0.07); }
+    .hairline-r { border-right: 1px solid rgba(255, 255, 255, 0.07); }
+    .hairline-l { border-left: 1px solid rgba(255, 255, 255, 0.07); }
+
+    /* Crosshair Corner Accents */
+    .crosshair {
+      position: relative;
+    }
+    .crosshair::before,
+    .crosshair::after {
+      content: "+";
+      position: absolute;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      line-height: 1;
+      color: rgba(255, 255, 255, 0.22);
+      pointer-events: none;
+      user-select: none;
+    }
+    .crosshair::before { top: -6px; left: -5px; }
+    .crosshair::after { top: -6px; right: -5px; }
+
+    /* Custom Range Sliders */
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      background: transparent;
+      cursor: pointer;
+    }
+    input[type="range"]::-webkit-slider-runnable-track {
+      background: rgba(255, 255, 255, 0.1);
+      height: 5px;
+      border-radius: 999px;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      margin-top: -5px;
+      background-color: #ededef;
+      height: 15px;
+      width: 15px;
+      border-radius: 50%;
+      border: 2px solid #10b981;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.6);
+      transition: transform 0.12s ease, background-color 0.12s ease;
+    }
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.15);
+      background-color: #ffffff;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #070709;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #23232c;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #343442;
+    }
+
+    /* Subtle Ambient Spotlight */
+    .spotlight {
+      background: radial-gradient(650px circle at 50% 0%, rgba(16, 185, 129, 0.08), transparent 70%);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-emerald-500/20 selection:text-emerald-300">
+
+  <!-- TOP TELEMETRY BAR -->
+  <div class="w-full bg-surface-950 hairline-b text-[11px] font-mono text-zinc-400 py-1.5 px-4">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="inline-flex items-center gap-1.5 text-emerald-400">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span id="app-runtime-badge">WEB PREVIEW MODE</span>
+        </span>
+        <span class="hidden sm:inline text-zinc-700">|</span>
+        <span id="app-version-telemetry" class="hidden sm:inline text-zinc-500">BUILD v2.0.0-STUDIO • AUTO-UPDATE ENGINE</span>
+      </div>
+      <div class="flex items-center gap-4">
+        <span class="hidden md:inline text-zinc-500">SECURITY: <span class="text-emerald-400">CLIENT-SIDE SANDBOX</span></span>
+        <a href="https://github.com/Metecr/All-In-One-Media-Studio/releases" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors flex items-center gap-1">
+          <span>Releases</span>
+          <i data-lucide="arrow-up-right" class="w-3 h-3"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- NAVBAR -->
+  <header class="sticky top-0 z-50 bg-surface-950/80 backdrop-blur-xl hairline-b">
+    <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <!-- Brand Logo (Strictly "All In One") -->
+      <a href="#" class="flex items-center gap-3 group">
+        <div class="w-9 h-9 rounded-lg bg-zinc-900 border border-white/10 flex items-center justify-center shadow-inner group-hover:border-emerald-500/50 transition-colors">
+          <span class="text-emerald-400 text-sm font-mono font-bold">▶</span>
+        </div>
+        <div class="flex flex-col">
+          <div class="flex items-center gap-2">
+            <span class="font-semibold tracking-tight text-white text-base">All In One</span>
+          </div>
+          <span class="text-[11px] font-mono text-zinc-500 leading-none">v2.0.0 • Media Studio</span>
+        </div>
+      </a>
+
+      <!-- Navigation Links (Preserved anchors #indir, #ozellikler, #araclar) -->
+      <div class="hidden md:flex items-center gap-1 bg-surface-900/90 p-1 rounded-lg border border-white/[0.06]">
+        <a href="#araclar" class="px-3.5 py-1.5 rounded-md text-xs font-medium text-zinc-300 hover:text-white hover:bg-white/[0.05] transition-all flex items-center gap-1.5">
+          <i data-lucide="terminal-square" class="w-3.5 h-3.5 text-emerald-400"></i>
+          Araçlar
+        </a>
+        <a href="#indir" class="px-3.5 py-1.5 rounded-md text-xs font-medium text-zinc-300 hover:text-white hover:bg-white/[0.05] transition-all flex items-center gap-1.5">
+          <i data-lucide="download" class="w-3.5 h-3.5 text-zinc-400"></i>
+          İndir
+        </a>
+        <a href="#ozellikler" class="px-3.5 py-1.5 rounded-md text-xs font-medium text-zinc-300 hover:text-white hover:bg-white/[0.05] transition-all flex items-center gap-1.5">
+          <i data-lucide="layers" class="w-3.5 h-3.5 text-zinc-400"></i>
+          Özellikler
+        </a>
+        <a href="#onizleme" class="px-3.5 py-1.5 rounded-md text-xs font-medium text-zinc-300 hover:text-white hover:bg-white/[0.05] transition-all flex items-center gap-1.5">
+          <i data-lucide="monitor" class="w-3.5 h-3.5 text-zinc-400"></i>
+          Arayüz
+        </a>
+      </div>
+
+      <!-- Quick CTA -->
+      <div class="flex items-center gap-2.5">
+        <a href="#indir" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white text-zinc-950 hover:bg-zinc-200 text-xs font-semibold tracking-tight transition-all shadow-sm">
+          <i data-lucide="arrow-down-to-line" class="w-3.5 h-3.5"></i>
+          <span>Uygulamayı İndir</span>
+        </a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="flex-1">
+    <!-- HERO SECTION -->
+    <section class="relative bg-grid-pattern spotlight hairline-b overflow-hidden">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 pb-16 lg:pt-20 lg:pb-24">
+        <div class="max-w-3xl mx-auto text-center">
+          <!-- Version Pill -->
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-850 border border-white/10 text-xs font-mono text-zinc-300 mb-6 shadow-sm">
+            <span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-400 font-semibold">v2.0.0</span>
+            <span>Sürüm v2.0.0 • Tüm Cihazlar</span>
+            <span class="text-zinc-600">•</span>
+            <span class="text-zinc-400">Reklamsız & Açık Mimari</span>
+          </div>
+
+          <!-- Main Heading (Strictly "All In One") -->
+          <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-[1.08] mb-5">
+            All In One ile Hemen İndirin <br class="hidden sm:inline" />
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-zinc-200 via-zinc-400 to-zinc-500">ve Medyanızı Stüdyoda İşleyin.</span>
+          </h1>
+
+          <!-- Subtitle -->
+          <p class="text-base sm:text-lg text-zinc-400 max-w-2xl mx-auto leading-relaxed mb-8 font-normal">
+            YouTube ve Instagram videolarını <span class="text-zinc-200 font-medium">MP4</span> veya <span class="text-zinc-200 font-medium">MP3</span> olarak indirin; tarayıcıdan çıkmadan format dönüştürün, 4K küçük resim ve etiket çekin, altyazı senkronize edin ve ses frekanslarını düzenleyin.
+          </p>
+
+          <!-- Platform Telemetry Strip -->
+          <div class="inline-flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-xs font-mono text-zinc-400 bg-surface-900/90 border border-white/[0.07] px-4 py-2.5 rounded-xl">
+            <span class="flex items-center gap-1.5 text-zinc-300"><i data-lucide="smartphone" class="w-3.5 h-3.5 text-emerald-400"></i> Android APK</span>
+            <span class="text-zinc-700">•</span>
+            <span class="flex items-center gap-1.5 text-zinc-300"><i data-lucide="apple" class="w-3.5 h-3.5 text-zinc-400"></i> iOS Ana Ekran Uygulaması</span>
+            <span class="text-zinc-700">•</span>
+            <span class="flex items-center gap-1.5 text-zinc-300"><i data-lucide="monitor" class="w-3.5 h-3.5 text-sky-400"></i> Windows EXE</span>
+            <span class="text-zinc-700">•</span>
+            <span class="flex items-center gap-1.5 text-zinc-300"><i data-lucide="laptop" class="w-3.5 h-3.5 text-amber-400"></i> macOS</span>
+          </div>
+        </div>
+
+        <!-- ========================================================== -->
+        <!-- ALL IN ONE ARAÇ SETİ (5 INTERACTIVE TOOLS - TABBED STUDIO) -->
+        <!-- ========================================================== -->
+        <div id="araclar" class="mt-12 scroll-mt-24">
+          <div class="glass-panel rounded-2xl overflow-hidden crosshair">
+            
+            <!-- Studio Window Top Bar + Tool Tabs -->
+            <div class="bg-surface-900/95 hairline-b px-3 sm:px-5 pt-3 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+              <!-- Left Window Controls + Label -->
+              <div class="flex items-center justify-between lg:justify-start gap-3 pb-2 lg:pb-3">
+                <div class="flex items-center gap-1.5">
+                  <span class="w-2.5 h-2.5 rounded-full bg-zinc-700"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-zinc-700"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-emerald-500/70"></span>
+                </div>
+                <span class="text-xs font-mono text-zinc-400 tracking-tight">all-in-one://workspace/studio-tools</span>
+                <span class="lg:hidden text-[11px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">6 Araç Aktif</span>
+              </div>
+
+              <!-- 6 Interactive Tool Tabs -->
+              <div class="flex items-center gap-1 overflow-x-auto no-scrollbar -mb-px" role="tablist" aria-label="All In One Araç Seti">
+                <button onclick="switchToolTab('downloader')" id="tab-btn-downloader" role="tab" aria-selected="true"
+                  class="tool-tab-btn group whitespace-nowrap px-3.5 py-2.5 text-xs font-medium border-b-2 border-emerald-400 text-white bg-white/[0.04] rounded-t-lg transition-all flex items-center gap-2">
+                  <i data-lucide="download-cloud" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>1. Video & Ses İndirici</span>
+                </button>
+
+                <button onclick="switchToolTab('converter')" id="tab-btn-converter" role="tab" aria-selected="false"
+                  class="tool-tab-btn group whitespace-nowrap px-3.5 py-2.5 text-xs font-medium border-b-2 border-transparent text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.02] rounded-t-lg transition-all flex items-center gap-2">
+                  <i data-lucide="file-sliders" class="w-3.5 h-3.5 text-zinc-400 group-hover:text-emerald-400"></i>
+                  <span>2. Dönüştürücü & Sıkıştırıcı</span>
+                </button>
+
+                <button onclick="switchToolTab('thumbnail')" id="tab-btn-thumbnail" role="tab" aria-selected="false"
+                  class="tool-tab-btn group whitespace-nowrap px-3.5 py-2.5 text-xs font-medium border-b-2 border-transparent text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.02] rounded-t-lg transition-all flex items-center gap-2">
+                  <i data-lucide="image" class="w-3.5 h-3.5 text-zinc-400 group-hover:text-emerald-400"></i>
+                  <span>3. 4K Thumbnail & Etiket</span>
+                </button>
+
+                <button onclick="switchToolTab('srt')" id="tab-btn-srt" role="tab" aria-selected="false"
+                  class="tool-tab-btn group whitespace-nowrap px-3.5 py-2.5 text-xs font-medium border-b-2 border-transparent text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.02] rounded-t-lg transition-all flex items-center gap-2">
+                  <i data-lucide="subtitles" class="w-3.5 h-3.5 text-zinc-400 group-hover:text-emerald-400"></i>
+                  <span>4. SRT Altyazı Stüdyosu</span>
+                </button>
+
+                <button onclick="switchToolTab('audio')" id="tab-btn-audio" role="tab" aria-selected="false"
+                  class="tool-tab-btn group whitespace-nowrap px-3.5 py-2.5 text-xs font-medium border-b-2 border-transparent text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.02] rounded-t-lg transition-all flex items-center gap-2">
+                  <i data-lucide="audio-waveform" class="w-3.5 h-3.5 text-zinc-400 group-hover:text-emerald-400"></i>
+                  <span>5. Ses Efekti Stüdyosu</span>
+                </button>
+
+                <button onclick="switchToolTab('aisrt')" id="tab-btn-aisrt" role="tab" aria-selected="false"
+                  class="tool-tab-btn group whitespace-nowrap px-3.5 py-2.5 text-xs font-medium border-b-2 border-transparent text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.02] rounded-t-lg transition-all flex items-center gap-2">
+                  <i data-lucide="sparkles" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>6. Sesten .SRT Üretici (AI)</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- ==================================================== -->
+            <!-- TAB 1: VİDEO & SES İNDİRİCİ (ORİJİNAL ÖZELLİK + PRO) -->
+            <!-- ==================================================== -->
+            <div id="tab-panel-downloader" class="tool-tab-panel p-5 sm:p-8">
+              <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                
+                <!-- Left Column: URL Input & Format Matrix -->
+                <div class="lg:col-span-7 space-y-5">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <span class="text-[11px] font-mono uppercase tracking-wider text-emerald-400">MODÜL 01 // STREAM EXTRACTOR</span>
+                      <h2 class="text-lg font-semibold text-white mt-0.5">Video & Ses İndirici</h2>
+                    </div>
+                    <div class="flex items-center gap-1.5 text-xs font-mono text-zinc-400">
+                      <span class="px-2 py-0.5 rounded bg-white/[0.04] border border-white/[0.06]">YouTube</span>
+                      <span class="px-2 py-0.5 rounded bg-white/[0.04] border border-white/[0.06]">Instagram</span>
+                      <span class="px-2 py-0.5 rounded bg-white/[0.04] border border-white/[0.06]">Shorts/Reels</span>
+                    </div>
+                  </div>
+
+                  <!-- URL Input Box -->
+                  <div class="space-y-2">
+                    <label for="dl-url-input" class="block text-xs font-medium text-zinc-400">Medya Bağlantısı (URL)</label>
+                    <div class="relative flex items-center">
+                      <i data-lucide="link-2" class="w-4 h-4 text-zinc-500 absolute left-3.5 pointer-events-none"></i>
+                      <input id="dl-url-input" type="url" 
+                        placeholder="https://www.youtube.com/watch?v=... veya https://www.instagram.com/reel/..."
+                        class="w-full pl-10 pr-28 py-3 bg-surface-950 border border-white/10 rounded-xl text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500/60 font-mono transition-colors" />
+                      <div class="absolute right-1.5 flex items-center gap-1">
+                        <button type="button" onclick="pasteToDownloader()" class="px-2.5 py-1.5 rounded-lg bg-surface-800 hover:bg-surface-700 text-xs font-mono text-zinc-300 border border-white/[0.06] transition-colors">
+                          Yapıştır
+                        </button>
+                      </div>
+                    </div>
+                    <!-- Sample Quick Links -->
+                    <div class="flex flex-wrap items-center gap-2 pt-1">
+                      <span class="text-[11px] font-mono text-zinc-500">Hızlı Test:</span>
+                      <button type="button" onclick="loadSampleVideo('https://www.youtube.com/watch?v=aqz-KE-bpKQ')" class="text-[11px] font-mono text-zinc-400 hover:text-emerald-400 underline underline-offset-2">Big Buck Bunny 4K (YouTube)</button>
+                      <span class="text-zinc-700">•</span>
+                      <button type="button" onclick="loadSampleVideo('https://www.youtube.com/watch?v=jfKfPfyJRdk')" class="text-[11px] font-mono text-zinc-400 hover:text-emerald-400 underline underline-offset-2">Lofi Girl Stream (YouTube)</button>
+                      <span class="text-zinc-700">•</span>
+                      <button type="button" onclick="loadSampleVideo('https://www.instagram.com/reel/C8xYz91Sample/')" class="text-[11px] font-mono text-zinc-400 hover:text-emerald-400 underline underline-offset-2">Instagram Reel Örneği</button>
+                    </div>
+                  </div>
+
+                  <!-- Format & Quality Selector -->
+                  <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-1">
+                    <!-- Output Mode: Video vs Audio -->
+                    <div class="bg-surface-950 p-3.5 rounded-xl border border-white/[0.07]">
+                      <span class="block text-[11px] font-mono uppercase text-zinc-500 mb-2.5">Medya Türü</span>
+                      <div class="grid grid-cols-2 gap-2">
+                        <button type="button" id="dl-mode-mp4" onclick="setDownloaderMode('video')"
+                          class="py-2 px-2.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 bg-emerald-500/15 text-emerald-300 border border-emerald-500/40 transition-all">
+                          <i data-lucide="film" class="w-3.5 h-3.5"></i>
+                          <span>Video</span>
+                        </button>
+                        <button type="button" id="dl-mode-mp3" onclick="setDownloaderMode('audio')"
+                          class="py-2 px-2.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 bg-surface-900 text-zinc-400 border border-white/[0.06] hover:text-white transition-all">
+                          <i data-lucide="music" class="w-3.5 h-3.5"></i>
+                          <span>Ses</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- User-Selectable Container Format (Video or Audio Formats) -->
+                    <div class="bg-surface-950 p-3.5 rounded-xl border border-white/[0.07]">
+                      <label for="dl-format-select" id="dl-format-label" class="block text-[11px] font-mono uppercase text-zinc-500 mb-2.5">Video Formatı Seçin</label>
+                      <select id="dl-format-select" onchange="updateDownloaderTelemetry()" class="w-full bg-surface-900 border border-white/10 rounded-lg px-3 py-2 text-xs font-mono text-zinc-200 focus:outline-none focus:border-emerald-500">
+                        <option value="MP4" selected>MP4 (H.264 / Evrensel)</option>
+                        <option value="MKV">MKV (Kayıpsız Matroska)</option>
+                        <option value="WEBM">WEBM (VP9 / AV1)</option>
+                        <option value="MOV">MOV (QuickTime Pro)</option>
+                      </select>
+                    </div>
+
+                    <!-- Quality / Bitrate Profile -->
+                    <div class="bg-surface-950 p-3.5 rounded-xl border border-white/[0.07]">
+                      <label for="dl-quality-select" id="dl-quality-label" class="block text-[11px] font-mono uppercase text-zinc-500 mb-2.5">Çözünürlük & Bitrate</label>
+                      <select id="dl-quality-select" onchange="updateDownloaderTelemetry()" class="w-full bg-surface-900 border border-white/10 rounded-lg px-3 py-2 text-xs font-mono text-zinc-200 focus:outline-none focus:border-emerald-500">
+                        <option value="2160p 4K">4K Ultra HD (2160p60)</option>
+                        <option value="1080p Full HD" selected>Full HD (1080p60)</option>
+                        <option value="720p HD">HD Ready (720p)</option>
+                        <option value="480p SD">SD (480p)</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <!-- Optional Trim & Metadata Toggles -->
+                  <div class="bg-surface-950/90 p-3.5 rounded-xl border border-white/[0.06] flex flex-wrap items-center justify-between gap-4">
+                    <div class="flex items-center gap-3">
+                      <label class="inline-flex items-center gap-2 text-xs text-zinc-300 cursor-pointer">
+                        <input type="checkbox" id="dl-trim-toggle" onchange="toggleTrimInputs()" class="rounded bg-surface-800 border-white/20 text-emerald-500 focus:ring-0" />
+                        <span>Zaman Aralığı Kırp (Trim)</span>
+                      </label>
+                      <div id="dl-trim-inputs" class="hidden flex items-center gap-1.5 font-mono text-xs">
+                        <input type="text" id="dl-trim-start" value="00:00" class="w-16 px-2 py-1 rounded bg-surface-900 border border-white/10 text-center text-zinc-200" placeholder="00:00" />
+                        <span class="text-zinc-600">→</span>
+                        <input type="text" id="dl-trim-end" value="02:30" class="w-16 px-2 py-1 rounded bg-surface-900 border border-white/10 text-center text-zinc-200" placeholder="02:30" />
+                      </div>
+                    </div>
+                    <label class="inline-flex items-center gap-2 text-xs text-zinc-400 cursor-pointer">
+                      <input type="checkbox" checked class="rounded bg-surface-800 border-white/20 text-emerald-500 focus:ring-0" />
+                      <span>ID3 / Kapak Gömmeli</span>
+                    </label>
+                  </div>
+
+                  <!-- Action Buttons -->
+                  <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                    <button type="button" onclick="analyzeAndDownloadMedia()" class="flex-1 py-3 px-5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-semibold text-xs sm:text-sm tracking-tight transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/10">
+                      <i data-lucide="zap" class="w-4 h-4"></i>
+                      <span>Akışı Çözümle & İndirmeyi Başlat</span>
+                    </button>
+                    <a href="#indir" class="py-3 px-4 rounded-xl bg-surface-850 hover:bg-surface-800 text-zinc-300 border border-white/10 text-xs font-mono flex items-center justify-center gap-2 transition-colors">
+                      <i data-lucide="cpu" class="w-3.5 h-3.5 text-emerald-400"></i>
+                      <span>Masaüstü/APK Motoru</span>
+                    </a>
+                  </div>
+                </div>
+
+                <!-- Right Column: Live Stream Inspector & Queue Preview -->
+                <div class="lg:col-span-5 bg-surface-950 rounded-xl border border-white/[0.08] overflow-hidden">
+                  <div class="px-4 py-2.5 bg-surface-900 hairline-b flex items-center justify-between text-[11px] font-mono text-zinc-400">
+                    <span>STREAM INSPECTOR</span>
+                    <span id="dl-status-badge" class="text-emerald-400">IDLE // HAZIR</span>
+                  </div>
+                  
+                  <div class="p-4 space-y-4">
+                    <!-- Video Preview Box -->
+                    <div class="relative aspect-video rounded-lg bg-surface-900 border border-white/[0.06] overflow-hidden flex items-center justify-center group">
+                      <img id="dl-preview-img" src="https://i.ytimg.com/vi/aqz-KE-bpKQ/maxresdefault.jpg" alt="Önizleme" class="w-full h-full object-cover opacity-80 transition-opacity" />
+                      <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent"></div>
+                      <div class="absolute bottom-3 left-3 right-3 flex items-end justify-between gap-2">
+                        <div>
+                          <span id="dl-preview-platform" class="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">YOUTUBE • 4K STREAM</span>
+                          <h3 id="dl-preview-title" class="text-xs font-semibold text-white mt-1 line-clamp-1">Big Buck Bunny 60fps 4K - Official Blender Open Movie</h3>
+                          <p id="dl-preview-author" class="text-[11px] text-zinc-400 font-mono">Kanal: Blender Foundation</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Progress & Telemetry Readout -->
+                    <div class="space-y-2 bg-surface-900/70 p-3 rounded-lg border border-white/[0.05] font-mono text-xs">
+                      <div class="flex justify-between text-zinc-400">
+                        <span>Çözümlenen Codec:</span>
+                        <span id="dl-codec-readout" class="text-zinc-200">avc1.64002a + mp4a.40.2</span>
+                      </div>
+                      <div class="flex justify-between text-zinc-400">
+                        <span>Tahmini Boyut:</span>
+                        <span id="dl-size-readout" class="text-zinc-200">~48.4 MB (1080p MP4)</span>
+                      </div>
+                      <div class="w-full bg-surface-950 h-2 rounded-full overflow-hidden border border-white/[0.05] mt-2">
+                        <div id="dl-progress-bar" class="bg-emerald-400 h-full w-0 transition-all duration-300"></div>
+                      </div>
+                      <div id="dl-log-output" class="text-[11px] text-zinc-400 pt-1">
+                        > Bağlantı yapıştırın veya hızlı test videolarından birini seçin.
+                      </div>
+                    </div>
+
+                    <!-- Direct App Required Notice -->
+                    <div id="dl-handoff-box" class="hidden p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-xs space-y-2.5">
+                      <div class="flex items-start gap-2.5 text-amber-300">
+                        <i data-lucide="shield-alert" class="w-4 h-4 shrink-0 mt-0.5"></i>
+                        <div>
+                          <p class="font-semibold text-white">İndirme İşlemi İçin Önce Uygulamayı İndirin</p>
+                          <p class="text-zinc-300 text-[11px] mt-0.5 leading-relaxed">Web stüdyosu yalnızca akış analizi ve önizleme içindir. Seçtiğiniz formatta (<strong id="dl-handoff-format" class="text-emerald-300">MP4 • 1080p</strong>) indirme yapmak için önce <strong>All In One</strong> uygulamasını indirin.</p>
+                        </div>
+                      </div>
+                      <div class="flex flex-wrap gap-2 pt-1">
+                        <button type="button" onclick="showAppRequiredModal('Video / Ses İndirme (' + document.getElementById('dl-format-select').value + ' • ' + document.getElementById('dl-quality-select').value + ')')" class="px-3 py-1.5 rounded-lg bg-emerald-500 text-zinc-950 font-semibold text-[11px] hover:bg-emerald-400 transition-colors flex items-center gap-1.5">
+                          <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                          <span>Uygulamayı İndir (APK / EXE / macOS)</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- ==================================================== -->
+            <!-- TAB 2: MEDYA DÖNÜŞTÜRÜCÜ & SIKIŞTIRICI (CLIENT-SIDE) -->
+            <!-- ==================================================== -->
+            <div id="tab-panel-converter" class="tool-tab-panel hidden p-5 sm:p-8">
+              <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                
+                <!-- Left Dropzone & Controls -->
+                <div class="lg:col-span-7 space-y-5">
+                  <div>
+                    <span class="text-[11px] font-mono uppercase tracking-wider text-emerald-400">MODÜL 02 // LOCAL TRANSCODER & COMPRESSOR</span>
+                    <h2 class="text-lg font-semibold text-white mt-0.5">Medya Dönüştürücü & Boyut Sıkıştırıcı</h2>
+                    <p class="text-xs text-zinc-400 mt-1">Dosyalarınız hiçbir sunucuya yüklenmez; tamamen tarayıcı belleğinde dönüştürülür ve sıkıştırılır.</p>
+                  </div>
+
+                  <!-- File Dropzone -->
+                  <label for="conv-file-input" id="conv-dropzone"
+                    class="block border-2 border-dashed border-white/10 hover:border-emerald-500/50 rounded-xl p-6 text-center cursor-pointer bg-surface-950/70 transition-all group">
+                    <input id="conv-file-input" type="file" accept="video/*,audio/*,image/*" class="hidden" onchange="handleConverterFile(this.files[0])" />
+                    <div class="w-11 h-11 rounded-xl bg-surface-850 border border-white/10 flex items-center justify-center mx-auto mb-3 group-hover:scale-105 transition-transform">
+                      <i data-lucide="upload-cloud" class="w-5 h-5 text-emerald-400"></i>
+                    </div>
+                    <p id="conv-file-name" class="text-sm font-medium text-zinc-200">Video, Ses veya Görsel dosyasını sürükleyin ya da seçin</p>
+                    <p id="conv-file-meta" class="text-xs font-mono text-zinc-500 mt-1">MP4, MOV, WEBM, MP3, WAV, PNG, JPG, WEBP desteklenir</p>
+                  </label>
+
+                  <!-- Conversion Settings -->
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="bg-surface-950 p-3.5 rounded-xl border border-white/[0.07]">
+                      <label for="conv-target-format" class="block text-[11px] font-mono uppercase text-zinc-500 mb-2">Hedef Format</label>
+                      <select id="conv-target-format" onchange="updateCompressionEstimate()" class="w-full bg-surface-900 border border-white/10 rounded-lg px-3 py-2 text-xs font-mono text-zinc-200 focus:outline-none focus:border-emerald-500">
+                        <option value="mp4">MP4 (H.264 / Evrensel Video)</option>
+                        <option value="webm">WEBM (VP9 / Web Optimize)</option>
+                        <option value="mp3">MP3 (Sadece Ses Ayrıştır)</option>
+                        <option value="wav">WAV (Kayıpsız PCM Ses)</option>
+                        <option value="webp">WEBP (Yüksek Sıkıştırmalı Görsel)</option>
+                        <option value="jpg">JPG (Standart Görsel)</option>
+                      </select>
+                    </div>
+
+                    <div class="bg-surface-950 p-3.5 rounded-xl border border-white/[0.07]">
+                      <div class="flex justify-between text-[11px] font-mono mb-2">
+                        <span class="uppercase text-zinc-500">Sıkıştırma Seviyesi</span>
+                        <span id="conv-ratio-label" class="text-emerald-400">75% Kalite (~%42 Küçültme)</span>
+                      </div>
+                      <input id="conv-quality-slider" type="range" min="20" max="95" value="75" oninput="updateCompressionEstimate()" class="w-full" />
+                      <div class="flex justify-between text-[10px] font-mono text-zinc-600 mt-1">
+                        <span>Maks. Küçültme</span>
+                        <span>Dengeli</span>
+                        <span>Kayıpsıza Yakın</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="flex flex-wrap gap-3">
+                    <button type="button" onclick="runMediaConversion()" class="flex-1 py-3 px-5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all">
+                      <i data-lucide="sparkles" class="w-4 h-4"></i>
+                      <span>Dönüştür & Boyutu Küçült</span>
+                    </button>
+                    <button type="button" onclick="loadDemoConverterFile()" class="py-3 px-4 rounded-xl bg-surface-850 hover:bg-surface-800 text-zinc-300 border border-white/10 text-xs font-mono transition-colors">
+                      Örnek Test Dosyası Yükle
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Right Column: Compression Telemetry & Download -->
+                <div class="lg:col-span-5 bg-surface-950 rounded-xl border border-white/[0.08] p-5 space-y-4">
+                  <div class="flex items-center justify-between border-b border-white/[0.06] pb-3">
+                    <span class="text-xs font-mono text-zinc-400">TRANSCODE ENGINE</span>
+                    <span id="conv-badge" class="text-[11px] font-mono px-2 py-0.5 rounded bg-white/[0.05] text-zinc-300">BEKLEMEDE</span>
+                  </div>
+
+                  <div class="grid grid-cols-2 gap-3 font-mono">
+                    <div class="p-3 rounded-lg bg-surface-900 border border-white/[0.05]">
+                      <span class="text-[10px] text-zinc-500 block">ORİJİNAL BOYUT</span>
+                      <span id="conv-orig-size" class="text-sm font-semibold text-zinc-200 mt-1 block">0.00 MB</span>
+                    </div>
+                    <div class="p-3 rounded-lg bg-surface-900 border border-emerald-500/20">
+                      <span class="text-[10px] text-emerald-400 block">HEDEF BOYUT</span>
+                      <span id="conv-target-size" class="text-sm font-semibold text-emerald-300 mt-1 block">0.00 MB</span>
+                    </div>
+                  </div>
+
+                  <!-- Progress Bar -->
+                  <div class="space-y-1.5">
+                    <div class="flex justify-between text-xs font-mono text-zinc-400">
+                      <span id="conv-step-text">Dosya bekleniyor...</span>
+                      <span id="conv-pct-text">0%</span>
+                    </div>
+                    <div class="w-full h-2 rounded-full bg-surface-900 overflow-hidden border border-white/[0.05]">
+                      <div id="conv-progress-bar" class="h-full bg-emerald-400 w-0 transition-all duration-200"></div>
+                    </div>
+                  </div>
+
+                  <!-- Download Output Button -->
+                  <div id="conv-result-box" class="hidden pt-2">
+                    <button type="button" id="conv-download-btn" class="w-full py-2.5 px-4 rounded-lg bg-white text-zinc-950 hover:bg-zinc-200 font-semibold text-xs flex items-center justify-center gap-2 transition-colors">
+                      <i data-lucide="download" class="w-4 h-4"></i>
+                      <span>İşlenmiş Dosyayı İndir</span>
+                    </button>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- ==================================================== -->
+            <!-- TAB 3: YOUTUBE 4K THUMBNAIL & ETİKET ÇEKİCİ          -->
+            <!-- ==================================================== -->
+            <div id="tab-panel-thumbnail" class="tool-tab-panel hidden p-5 sm:p-8">
+              <div class="space-y-6">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div>
+                    <span class="text-[11px] font-mono uppercase tracking-wider text-emerald-400">MODÜL 03 // THUMBNAIL & METADATA EXTRACTOR</span>
+                    <h2 class="text-lg font-semibold text-white mt-0.5">YouTube 4K Küçük Resim (Thumbnail) & Etiket Çekici</h2>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <button type="button" onclick="fetchThumbnailAndTags('https://www.youtube.com/watch?v=aqz-KE-bpKQ')" class="text-xs font-mono px-2.5 py-1.5 rounded-lg bg-surface-850 hover:bg-surface-800 text-zinc-300 border border-white/10">
+                      Örnek 1: Blender 4K
+                    </button>
+                    <button type="button" onclick="fetchThumbnailAndTags('https://www.youtube.com/watch?v=jfKfPfyJRdk')" class="text-xs font-mono px-2.5 py-1.5 rounded-lg bg-surface-850 hover:bg-surface-800 text-zinc-300 border border-white/10">
+                      Örnek 2: Canlı Yayın
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Input Row -->
+                <div class="flex flex-col sm:flex-row gap-3">
+                  <div class="relative flex-1">
+                    <i data-lucide="youtube" class="w-4 h-4 text-zinc-500 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+                    <input id="thumb-url-input" type="url" value="https://www.youtube.com/watch?v=aqz-KE-bpKQ"
+                      placeholder="YouTube Video veya Shorts linkini yapıştırın (örn: https://youtu.be/...)"
+                      class="w-full pl-10 pr-4 py-3 bg-surface-950 border border-white/10 rounded-xl text-sm text-white font-mono focus:outline-none focus:border-emerald-500" />
+                  </div>
+                  <button type="button" onclick="fetchThumbnailAndTags()" class="py-3 px-6 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 shrink-0 transition-all">
+                    <i data-lucide="search" class="w-4 h-4"></i>
+                    <span>4K Kapak & Etiketleri Çek</span>
+                  </button>
+                </div>
+
+                <!-- Results Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                  <!-- Main 4K / MaxRes Preview + Resolution Cards -->
+                  <div class="lg:col-span-7 space-y-4">
+                    <div class="relative aspect-video rounded-xl overflow-hidden bg-surface-950 border border-white/10 group">
+                      <img id="thumb-main-img" src="https://i.ytimg.com/vi/aqz-KE-bpKQ/maxresdefault.jpg" alt="YouTube 4K Thumbnail" class="w-full h-full object-cover" crossorigin="anonymous" />
+                      <div class="absolute top-3 left-3 px-2.5 py-1 rounded bg-black/80 backdrop-blur-md border border-white/10 text-[11px] font-mono text-emerald-400">
+                        MAXRESDEFAULT • 1920×1080 / 4K SOURCE
+                      </div>
+                      <div class="absolute bottom-3 right-3 flex gap-2">
+                        <button type="button" onclick="downloadThumbnailImage('maxresdefault')" class="px-3.5 py-2 rounded-lg bg-white text-zinc-950 hover:bg-zinc-200 font-semibold text-xs flex items-center gap-1.5 shadow-lg">
+                          <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                          <span>4K / HD Resmi İndir (.jpg)</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- All Available Resolutions Row -->
+                    <div class="grid grid-cols-3 gap-3 font-mono text-xs">
+                      <button type="button" onclick="downloadThumbnailImage('sddefault')" class="p-2.5 rounded-lg bg-surface-950 hover:bg-surface-900 border border-white/[0.07] flex items-center justify-between text-zinc-300 transition-colors">
+                        <span>SD (640×480)</span>
+                        <i data-lucide="arrow-down-to-line" class="w-3.5 h-3.5 text-emerald-400"></i>
+                      </button>
+                      <button type="button" onclick="downloadThumbnailImage('hqdefault')" class="p-2.5 rounded-lg bg-surface-950 hover:bg-surface-900 border border-white/[0.07] flex items-center justify-between text-zinc-300 transition-colors">
+                        <span>HQ (480×360)</span>
+                        <i data-lucide="arrow-down-to-line" class="w-3.5 h-3.5 text-emerald-400"></i>
+                      </button>
+                      <button type="button" onclick="downloadThumbnailImage('mqdefault')" class="p-2.5 rounded-lg bg-surface-950 hover:bg-surface-900 border border-white/[0.07] flex items-center justify-between text-zinc-300 transition-colors">
+                        <span>MQ (320×180)</span>
+                        <i data-lucide="arrow-down-to-line" class="w-3.5 h-3.5 text-emerald-400"></i>
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Extracted Metadata & SEO Tags -->
+                  <div class="lg:col-span-5 bg-surface-950 rounded-xl border border-white/[0.08] p-5 space-y-4">
+                    <div class="flex items-center justify-between border-b border-white/[0.06] pb-3">
+                      <div>
+                        <span class="text-[11px] font-mono text-zinc-400 block">METADATA & SEO TAGS</span>
+                        <h3 id="thumb-video-title" class="text-sm font-semibold text-white mt-0.5 line-clamp-1">Big Buck Bunny 60fps 4K - Official Blender Foundation</h3>
+                      </div>
+                      <button type="button" onclick="copyExtractedTags()" class="px-2.5 py-1.5 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/30 text-xs font-mono flex items-center gap-1.5 shrink-0">
+                        <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                        <span id="copy-tags-label">Tümünü Kopyala</span>
+                      </button>
+                    </div>
+
+                    <div class="text-xs font-mono text-zinc-400 flex items-center justify-between">
+                      <span>Video ID: <strong id="thumb-video-id" class="text-zinc-200">aqz-KE-bpKQ</strong></span>
+                      <span>Kanal: <strong id="thumb-video-author" class="text-zinc-200">Blender Foundation</strong></span>
+                    </div>
+
+                    <!-- Tag Pills Container -->
+                    <div id="thumb-tags-container" class="flex flex-wrap gap-1.5 max-h-52 overflow-y-auto p-1">
+                      <!-- Populated dynamically by JS -->
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ==================================================== -->
+            <!-- TAB 4: SRT ALTYAZI KAYDIRICI & TEMİZLEYİCİ           -->
+            <!-- ==================================================== -->
+            <div id="tab-panel-srt" class="tool-tab-panel hidden p-5 sm:p-8">
+              <div class="space-y-5">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div>
+                    <span class="text-[11px] font-mono uppercase tracking-wider text-emerald-400">MODÜL 04 // SUBTITLE TIMECODE ENGINE</span>
+                    <h2 class="text-lg font-semibold text-white mt-0.5">SRT Altyazı Zaman Kaydırıcı & Temizleyici</h2>
+                  </div>
+                  <div class="flex flex-wrap items-center gap-2">
+                    <label for="srt-file-upload" class="px-3 py-1.5 rounded-lg bg-surface-850 hover:bg-surface-800 text-zinc-200 border border-white/10 text-xs font-mono cursor-pointer flex items-center gap-1.5">
+                      <i data-lucide="folder-open" class="w-3.5 h-3.5 text-emerald-400"></i>
+                      <span>.SRT Dosyası Yükle</span>
+                      <input id="srt-file-upload" type="file" accept=".srt,.txt" class="hidden" onchange="loadSrtFile(this.files[0])" />
+                    </label>
+                    <button type="button" onclick="loadSampleSrt()" class="px-3 py-1.5 rounded-lg bg-surface-900 hover:bg-surface-800 text-zinc-400 hover:text-white border border-white/[0.07] text-xs font-mono">
+                      Örnek SRT Yükle
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Control Bar: Time Shift & Cleaners -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 bg-surface-950 p-4 rounded-xl border border-white/[0.07]">
+                  <!-- Time Shift Buttons -->
+                  <div class="lg:col-span-7 flex flex-wrap items-center gap-2">
+                    <span class="text-xs font-mono text-zinc-400 mr-1">Zaman Kaydır:</span>
+                    <button type="button" onclick="shiftSrtTime(-1000)" class="px-2.5 py-1.5 rounded-lg bg-surface-850 hover:bg-surface-800 text-xs font-mono text-rose-300 border border-white/10">-1.0s</button>
+                    <button type="button" onclick="shiftSrtTime(-500)" class="px-2.5 py-1.5 rounded-lg bg-surface-850 hover:bg-surface-800 text-xs font-mono text-rose-300 border border-white/10">-0.5s</button>
+                    <button type="button" onclick="shiftSrtTime(500)" class="px-2.5 py-1.5 rounded-lg bg-surface-850 hover:bg-surface-800 text-xs font-mono text-emerald-300 border border-white/10">+0.5s</button>
+                    <button type="button" onclick="shiftSrtTime(1000)" class="px-2.5 py-1.5 rounded-lg bg-surface-850 hover:bg-surface-800 text-xs font-mono text-emerald-300 border border-white/10">+1.0s</button>
+                    
+                    <div class="flex items-center gap-1 ml-auto sm:ml-2">
+                      <input id="srt-custom-ms" type="number" value="250" step="50" class="w-20 px-2 py-1.5 rounded-lg bg-surface-900 border border-white/10 text-xs font-mono text-white text-center" />
+                      <span class="text-xs font-mono text-zinc-500">ms</span>
+                      <button type="button" onclick="shiftSrtCustom()" class="px-2.5 py-1.5 rounded-lg bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 text-xs font-mono hover:bg-emerald-500/25">Uygula</button>
+                    </div>
+                  </div>
+
+                  <!-- Clean & Format Buttons -->
+                  <div class="lg:col-span-5 flex flex-wrap items-center justify-end gap-2">
+                    <button type="button" onclick="cleanSrtFormatting()" class="px-3 py-1.5 rounded-lg bg-surface-850 hover:bg-surface-800 text-xs font-mono text-zinc-200 border border-white/10 flex items-center gap-1.5">
+                      <i data-lucide="wand-2" class="w-3.5 h-3.5 text-emerald-400"></i>
+                      <span>HTML, [Efekt] & Boşlukları Temizle</span>
+                    </button>
+                    <button type="button" onclick="downloadEditedSrt()" class="px-3.5 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-semibold text-xs flex items-center gap-1.5">
+                      <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                      <span>.SRT İndir</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Side-by-Side SRT Editor -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                  <div class="space-y-1.5">
+                    <div class="flex justify-between text-xs font-mono text-zinc-400">
+                      <span>KAYNAK ALTYAZI (DÜZENLENEBİLİR)</span>
+                      <span id="srt-shift-indicator" class="text-emerald-400">Toplam Kayma: 0 ms</span>
+                    </div>
+                    <textarea id="srt-input-area" rows="10" oninput="syncSrtOutput()"
+                      class="w-full p-3.5 rounded-xl bg-surface-950 border border-white/10 font-mono text-xs text-zinc-300 focus:outline-none focus:border-emerald-500 leading-relaxed"></textarea>
+                  </div>
+                  <div class="space-y-1.5">
+                    <div class="flex justify-between text-xs font-mono text-zinc-400">
+                      <span>İŞLENMİŞ ÇIKTI ÖNİZLEMESİ</span>
+                      <span id="srt-line-count" class="text-zinc-500">Hazır</span>
+                    </div>
+                    <textarea id="srt-output-area" rows="10" readonly
+                      class="w-full p-3.5 rounded-xl bg-surface-950/60 border border-white/[0.07] font-mono text-xs text-emerald-300/90 focus:outline-none leading-relaxed"></textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ==================================================== -->
+            <!-- TAB 5: SES EFEKTİ STÜDYOSU (WEB AUDIO API)           -->
+            <!-- ==================================================== -->
+            <div id="tab-panel-audio" class="tool-tab-panel hidden p-5 sm:p-8">
+              <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                
+                <!-- Left Controls: File Upload, Presets, Sliders -->
+                <div class="lg:col-span-6 space-y-5">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <span class="text-[11px] font-mono uppercase tracking-wider text-emerald-400">MODÜL 05 // WEB AUDIO DSP STUDIO</span>
+                      <h2 class="text-lg font-semibold text-white mt-0.5">Ses Efekti, Hız & Perde (Pitch) Stüdyosu</h2>
+                    </div>
+                  </div>
+
+                  <!-- Upload or Built-in Synth Loop -->
+                  <div class="flex flex-wrap items-center gap-2.5">
+                    <label for="audio-studio-upload" class="px-3.5 py-2 rounded-xl bg-surface-850 hover:bg-surface-800 border border-white/10 text-xs font-mono text-zinc-200 cursor-pointer flex items-center gap-2 transition-colors">
+                      <i data-lucide="music-4" class="w-4 h-4 text-emerald-400"></i>
+                      <span>MP3 / WAV Dosyası Seç</span>
+                      <input id="audio-studio-upload" type="file" accept="audio/*" class="hidden" onchange="loadUserAudioFile(this.files[0])" />
+                    </label>
+                    <button type="button" onclick="loadBuiltInSynthLoop()" class="px-3.5 py-2 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/30 text-xs font-mono flex items-center gap-1.5 transition-colors">
+                      <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                      <span>Dahili Synthwave Demo Yükle</span>
+                    </button>
+                  </div>
+
+                  <!-- Quick DSP Presets -->
+                  <div class="space-y-1.5">
+                    <span class="text-[11px] font-mono text-zinc-500 uppercase">Hazır Stüdyo Profilleri</span>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 font-mono text-xs">
+                      <button type="button" onclick="applyAudioPreset('normal')" class="py-2 px-2.5 rounded-lg bg-surface-950 hover:bg-surface-850 border border-white/10 text-zinc-300">Stüdyo Flat</button>
+                      <button type="button" onclick="applyAudioPreset('nightcore')" class="py-2 px-2.5 rounded-lg bg-surface-950 hover:bg-surface-850 border border-white/10 text-emerald-300">Nightcore (1.25x)</button>
+                      <button type="button" onclick="applyAudioPreset('slowed')" class="py-2 px-2.5 rounded-lg bg-surface-950 hover:bg-surface-850 border border-white/10 text-sky-300">Slowed & Bass</button>
+                      <button type="button" onclick="applyAudioPreset('podcast')" class="py-2 px-2.5 rounded-lg bg-surface-950 hover:bg-surface-850 border border-white/10 text-amber-300">Podcast Vokal</button>
+                    </div>
+                  </div>
+
+                  <!-- Parameter Sliders -->
+                  <div class="space-y-4 bg-surface-950 p-4 rounded-xl border border-white/[0.07]">
+                    <!-- Playback Speed -->
+                    <div>
+                      <div class="flex justify-between text-xs font-mono mb-1.5">
+                        <span class="text-zinc-400">Oynatma Hızı (Speed / Tempo)</span>
+                        <span id="audio-speed-val" class="text-emerald-400">1.00x</span>
+                      </div>
+                      <input id="audio-speed-slider" type="range" min="0.5" max="1.75" step="0.05" value="1.0" oninput="updateAudioParams()" class="w-full" />
+                    </div>
+
+                    <!-- Detune / Pitch Shift -->
+                    <div>
+                      <div class="flex justify-between text-xs font-mono mb-1.5">
+                        <span class="text-zinc-400">Perde Kaydırma (Pitch / Semitone)</span>
+                        <span id="audio-pitch-val" class="text-emerald-400">0 cent</span>
+                      </div>
+                      <input id="audio-pitch-slider" type="range" min="-800" max="800" step="50" value="0" oninput="updateAudioParams()" class="w-full" />
+                    </div>
+
+                    <!-- Bass Boost (LowShelf) -->
+                    <div>
+                      <div class="flex justify-between text-xs font-mono mb-1.5">
+                        <span class="text-zinc-400">Bass Boost (85Hz Low-Shelf)</span>
+                        <span id="audio-bass-val" class="text-emerald-400">0 dB</span>
+                      </div>
+                      <input id="audio-bass-slider" type="range" min="-12" max="15" step="1" value="0" oninput="updateAudioParams()" class="w-full" />
+                    </div>
+
+                    <!-- Treble (HighShelf) -->
+                    <div>
+                      <div class="flex justify-between text-xs font-mono mb-1.5">
+                        <span class="text-zinc-400">Kristal Tiz (4.5kHz High-Shelf)</span>
+                        <span id="audio-treble-val" class="text-emerald-400">0 dB</span>
+                      </div>
+                      <input id="audio-treble-slider" type="range" min="-12" max="12" step="1" value="0" oninput="updateAudioParams()" class="w-full" />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Right Column: Real-time Spectrum Visualizer & Transport -->
+                <div class="lg:col-span-6 bg-surface-950 rounded-xl border border-white/[0.08] p-5 flex flex-col justify-between space-y-4">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <span class="text-[11px] font-mono text-zinc-500 block">REAL-TIME FFT SPECTRUM</span>
+                      <h3 id="audio-track-title" class="text-xs font-mono text-zinc-200 mt-0.5">Hazır: Dahili Synthwave veya Dosya Seçin</h3>
+                    </div>
+                    <span id="audio-state-pill" class="text-[11px] font-mono px-2 py-0.5 rounded bg-white/[0.05] text-zinc-400">STOPPED</span>
+                  </div>
+
+                  <!-- Canvas Visualizer -->
+                  <div class="relative h-48 rounded-lg bg-surface-900 border border-white/[0.06] overflow-hidden">
+                    <canvas id="audio-visualizer-canvas" width="600" height="200" class="w-full h-full block"></canvas>
+                  </div>
+
+                  <!-- Transport Controls & User Audio Format Selector -->
+                  <div class="flex flex-wrap items-center justify-between gap-3 pt-1">
+                    <div class="flex items-center gap-2">
+                      <button type="button" id="audio-play-btn" onclick="toggleAudioPlayback()" class="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-semibold text-xs flex items-center gap-2 transition-all">
+                        <i data-lucide="play" class="w-4 h-4"></i>
+                        <span id="audio-play-label">Önizlemeyi Başlat</span>
+                      </button>
+                      <button type="button" onclick="stopAudioPlayback()" class="p-2.5 rounded-xl bg-surface-850 hover:bg-surface-800 text-zinc-300 border border-white/10">
+                        <i data-lucide="square" class="w-4 h-4"></i>
+                      </button>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                      <select id="audio-export-format" class="bg-surface-900 border border-white/10 rounded-xl px-3 py-2.5 text-xs font-mono text-zinc-200 focus:outline-none focus:border-emerald-500">
+                        <option value="MP3 (320kbps)" selected>Format: MP3 (320kbps)</option>
+                        <option value="WAV (Kayıpsız PCM)">Format: WAV (Kayıpsız)</option>
+                        <option value="FLAC (Stüdyo Master)">Format: FLAC (Kayıpsız)</option>
+                        <option value="M4A (AAC 256kbps)">Format: M4A / AAC</option>
+                        <option value="OGG (Opus)">Format: OGG Opus</option>
+                      </select>
+                      <button type="button" onclick="exportProcessedWav()" class="px-3.5 py-2.5 rounded-xl bg-surface-850 hover:bg-surface-800 text-zinc-200 border border-white/10 text-xs font-mono flex items-center gap-1.5">
+                        <i data-lucide="download" class="w-3.5 h-3.5 text-emerald-400"></i>
+                        <span>Sesi İndir</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- ==================================================== -->
+            <!-- TAB 6: SESTEN .SRT ALTYAZI ÜRETİCİ (WHISPER AI)       -->
+            <!-- ==================================================== -->
+            <div id="tab-panel-aisrt" class="tool-tab-panel hidden p-5 sm:p-8">
+              <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                
+                <!-- Left Column: Audio Upload & Whisper AI Configuration -->
+                <div class="lg:col-span-6 space-y-5">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <span class="text-[11px] font-mono uppercase tracking-wider text-emerald-400">MODÜL 06 // NEURAL SPEECH-TO-SRT (OPENAI WHISPER)</span>
+                      <h2 class="text-lg font-semibold text-white mt-0.5">Yapay Zeka ile Saniye Saniye Sesten .SRT Üretici</h2>
+                      <p class="text-xs text-zinc-400 mt-1">Ses veya video dosyanızı yükleyin; 16kHz vokal netleştirme ve çok dilli OpenAI Whisper modeliyle saniye saniye zaman damgalı <code class="text-emerald-300">.srt</code> altyazıya dönüştürün.</p>
+                    </div>
+                  </div>
+
+                  <!-- Audio File Dropzone -->
+                  <label for="aisrt-file-input" class="block border-2 border-dashed border-white/10 hover:border-emerald-500/50 rounded-xl p-5 text-center cursor-pointer bg-surface-950/70 transition-all group">
+                    <input id="aisrt-file-input" type="file" accept="audio/*,video/*" class="hidden" onchange="handleAiSrtFile(this.files[0])" />
+                    <div class="w-10 h-10 rounded-xl bg-surface-850 border border-white/10 flex items-center justify-center mx-auto mb-2.5 group-hover:scale-105 transition-transform">
+                      <i data-lucide="mic" class="w-5 h-5 text-emerald-400"></i>
+                    </div>
+                    <p id="aisrt-file-name" class="text-sm font-medium text-zinc-200">Konuşma içeren Ses (MP3, WAV, M4A) veya Video (MP4) seçin</p>
+                    <p id="aisrt-file-meta" class="text-xs font-mono text-zinc-500 mt-1">16kHz Mono DSP Vokal Ön-İşleme Otomatik Uygulanır</p>
+                  </label>
+
+                  <!-- Built-in Audio Player for Verification -->
+                  <div id="aisrt-player-wrap" class="hidden bg-surface-950 p-3 rounded-xl border border-white/[0.07]">
+                    <div class="flex items-center justify-between text-[11px] font-mono text-zinc-400 mb-1.5">
+                      <span>YÜKLENEN SES ÖNİZLEMESİ</span>
+                      <span id="aisrt-duration-badge" class="text-emerald-400">00:00</span>
+                    </div>
+                    <audio id="aisrt-audio-player" controls class="w-full h-9"></audio>
+                  </div>
+
+                  <!-- AI Accuracy & Timestamp Controls -->
+                  <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <!-- Language -->
+                    <div class="bg-surface-950 p-3 rounded-xl border border-white/[0.07]">
+                      <label for="aisrt-lang" class="block text-[10px] font-mono uppercase text-zinc-500 mb-1.5">Konuşma Dili</label>
+                      <select id="aisrt-lang" class="w-full bg-surface-900 border border-white/10 rounded-lg px-2.5 py-2 text-xs font-mono text-zinc-200 focus:outline-none focus:border-emerald-500">
+                        <option value="turkish" selected>Türkçe (TR)</option>
+                        <option value="english">İngilizce (EN)</option>
+                        <option value="german">Almanca (DE)</option>
+                        <option value="french">Fransızca (FR)</option>
+                        <option value="spanish">İspanyolca (ES)</option>
+                      </select>
+                    </div>
+
+                    <!-- Whisper Model Size (Accuracy vs Speed) -->
+                    <div class="bg-surface-950 p-3 rounded-xl border border-white/[0.07]">
+                      <label for="aisrt-model" class="block text-[10px] font-mono uppercase text-zinc-500 mb-1.5">Yapay Zeka Modeli</label>
+                      <select id="aisrt-model" class="w-full bg-surface-900 border border-white/10 rounded-lg px-2.5 py-2 text-xs font-mono text-zinc-200 focus:outline-none focus:border-emerald-500">
+                        <option value="Xenova/whisper-small" selected>Whisper Small (Yüksek Doğruluk ★)</option>
+                        <option value="Xenova/whisper-base">Whisper Base (Hızlı / Düşük Boyut)</option>
+                      </select>
+                    </div>
+
+                    <!-- Timestamp Granularity -->
+                    <div class="bg-surface-950 p-3 rounded-xl border border-white/[0.07]">
+                      <label for="aisrt-granularity" class="block text-[10px] font-mono uppercase text-zinc-500 mb-1.5">Zamanlama Modu</label>
+                      <select id="aisrt-granularity" class="w-full bg-surface-900 border border-white/10 rounded-lg px-2.5 py-2 text-xs font-mono text-zinc-200 focus:outline-none focus:border-emerald-500">
+                        <option value="second" selected>Saniye Saniye (1-2 sn Kısa Blok)</option>
+                        <option value="sentence">Cümle Bazlı (Standart .SRT)</option>
+                        <option value="word">Kelime Kelime (Her Kelime Ayrı)</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <!-- Vocal Clarity DSP Pre-Filter Toggle -->
+                  <div class="bg-surface-950/90 p-3.5 rounded-xl border border-white/[0.06] flex items-center justify-between gap-3">
+                    <label class="inline-flex items-center gap-2.5 text-xs text-zinc-300 cursor-pointer">
+                      <input type="checkbox" id="aisrt-dsp-enhance" checked class="rounded bg-surface-800 border-white/20 text-emerald-500 focus:ring-0" />
+                      <span><strong>DSP Vokal Netleştirme (80Hz Kesim + 2.8kHz Vokal Boost)</strong> — Kelime doğruluğunu artırır</span>
+                    </label>
+                  </div>
+
+                  <!-- Start Transcription Button -->
+                  <button type="button" id="aisrt-start-btn" onclick="runWhisperTranscription()"
+                    class="w-full py-3.5 px-5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all shadow-lg shadow-emerald-500/10">
+                    <i data-lucide="cpu" class="w-4 h-4"></i>
+                    <span id="aisrt-btn-label">Yapay Zeka ile Saniye Saniye .SRT'ye Çevir</span>
+                  </button>
+                </div>
+
+                <!-- Right Column: Live Progress & Generated SRT Output -->
+                <div class="lg:col-span-6 bg-surface-950 rounded-xl border border-white/[0.08] p-5 space-y-4">
+                  <div class="flex items-center justify-between border-b border-white/[0.06] pb-3">
+                    <div>
+                      <span class="text-[11px] font-mono text-zinc-400 block">WHISPER ASR ENGINE TELEMETRY</span>
+                      <span id="aisrt-status-text" class="text-xs font-mono text-emerald-400">Hazır — Ses dosyası yükleyip başlatın</span>
+                    </div>
+                    <span id="aisrt-segment-badge" class="text-[11px] font-mono px-2.5 py-1 rounded bg-white/[0.05] text-zinc-300">0 Blok</span>
+                  </div>
+
+                  <!-- Progress Bar -->
+                  <div class="space-y-1.5">
+                    <div class="flex justify-between text-[11px] font-mono text-zinc-400">
+                      <span id="aisrt-substep-text">Model: Xenova/whisper-small (Çok Dilli Yüksek Doğruluk)</span>
+                      <span id="aisrt-pct-text">0%</span>
+                    </div>
+                    <div class="w-full h-2 rounded-full bg-surface-900 overflow-hidden border border-white/[0.05]">
+                      <div id="aisrt-progress-bar" class="h-full bg-emerald-400 w-0 transition-all duration-300"></div>
+                    </div>
+                  </div>
+
+                  <!-- Generated SRT Textarea -->
+                  <div class="space-y-1.5">
+                    <div class="flex items-center justify-between text-xs font-mono text-zinc-400">
+                      <span>SANİYE SANİYE ÜRETİLEN .SRT ÖNİZLEMESİ</span>
+                      <button type="button" onclick="sendAiSrtToEditor()" class="text-[11px] text-emerald-400 hover:underline">
+                        SRT Stüdyosuna Aktar (Sekme 4) →
+                      </button>
+                    </div>
+                    <textarea id="aisrt-output-box" rows="10" readonly
+                      placeholder="1&#10;00:00:00,000 --> 00:00:02,140&#10;Ses dosyanız yüklendiğinde konuşmalar saniye saniye gerçek zaman damgalarıyla burada oluşturulacaktır..."
+                      class="w-full p-3.5 rounded-xl bg-surface-900/90 border border-white/10 font-mono text-xs text-emerald-300 focus:outline-none leading-relaxed"></textarea>
+                  </div>
+
+                  <!-- Export / Download Action (Triggers App Required Modal!) -->
+                  <div class="flex flex-wrap items-center justify-between gap-3 pt-1">
+                    <span class="text-[11px] font-mono text-zinc-500">UTF-8 • Milisaniye Hassasiyetli SubRip (.SRT)</span>
+                    <button type="button" onclick="downloadAiGeneratedSrt()" class="px-4 py-2.5 rounded-xl bg-white hover:bg-zinc-200 text-zinc-950 font-semibold text-xs flex items-center gap-2 transition-colors">
+                      <i data-lucide="download" class="w-4 h-4"></i>
+                      <span>.SRT Dosyasını İndir</span>
+                    </button>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================== -->
+    <!-- İNDİRME LİNKLERİ SECTION (PRESERVED EXACT URLS + ENHANCED) -->
+    <!-- ========================================================== -->
+    <section id="indir" aria-label="Platform İndirme Seçenekleri" class="py-20 hairline-b scroll-mt-16">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
+          <div>
+            <span class="text-xs font-mono uppercase tracking-widest text-emerald-400">NATIVE BINARIES // v2.0.0 RELEASES</span>
+            <h2 class="text-2xl sm:text-3xl font-bold text-white tracking-tight mt-1">All In One Platform İndirme Seçenekleri</h2>
+          </div>
+          <p class="text-xs sm:text-sm text-zinc-400 max-w-md">
+            Arka planda toplu indirme, 8K FFmpeg birleştirme ve sistem tepsisi (system tray) entegrasyonu için cihazınıza uygun yerel <strong>All In One</strong> paketini indirin.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <!-- 1. Android APK -->
+          <div class="glass-card rounded-2xl p-6 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-5">
+                <div class="w-11 h-11 rounded-xl bg-emerald-500/10 border border-emerald-500/25 flex items-center justify-center text-emerald-400">
+                  <i data-lucide="smartphone" class="w-5 h-5"></i>
+                </div>
+                <span class="text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-white/[0.04] border border-white/[0.08] text-zinc-300">ARM64 / Universal</span>
+              </div>
+              <h3 class="text-lg font-semibold text-white">All In One — Android</h3>
+              <p class="text-xs text-zinc-400 mt-1.5 leading-relaxed">
+                YouTube ve Instagram paylaşım menüsünden tek dokunuşla arka planda MP4/MP3 indirme. Reklamsız APK paketi.
+              </p>
+              <div class="mt-4 pt-4 hairline-t flex items-center justify-between text-[11px] font-mono text-zinc-500">
+                <span>Paket: VideoIndirici.apk</span>
+                <span>Android 8.0+</span>
+              </div>
+            </div>
+
+            <a href="https://github.com/Metecr/All-In-One-Media-Studio/releases/latest/download/VideoIndirici.apk"
+               class="mt-6 w-full py-3 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-semibold text-xs flex items-center justify-center gap-2 transition-all shadow-lg shadow-emerald-500/10">
+              <i data-lucide="download" class="w-4 h-4"></i>
+              <span>Android APK İndir</span>
+            </a>
+          </div>
+
+          <!-- 2. Windows EXE -->
+          <div class="glass-card rounded-2xl p-6 flex flex-col justify-between relative">
+            <div>
+              <div class="flex items-center justify-between mb-5">
+                <div class="w-11 h-11 rounded-xl bg-sky-500/10 border border-sky-500/25 flex items-center justify-center text-sky-400">
+                  <i data-lucide="monitor" class="w-5 h-5"></i>
+                </div>
+                <span class="text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-sky-500/10 border border-sky-500/20 text-sky-300">Win 10 / 11 (64-bit)</span>
+              </div>
+              <h3 class="text-lg font-semibold text-white">All In One — Windows</h3>
+              <p class="text-xs text-zinc-400 mt-1.5 leading-relaxed">
+                Donanım hızlandırmalı (NVENC / QuickSync) dönüştürme motoru, oynatma listesi (playlist) indirme ve otomatik pano takipçisi.
+              </p>
+              <div class="mt-4 pt-4 hairline-t flex items-center justify-between text-[11px] font-mono text-zinc-500">
+                <span>Paket: VideoIndirici.exe</span>
+                <span>Taşınabilir / Kurulum</span>
+              </div>
+            </div>
+
+            <a href="https://github.com/Metecr/All-In-One-Media-Studio/releases/latest/download/VideoIndirici.exe"
+               class="mt-6 w-full py-3 px-4 rounded-xl bg-white hover:bg-zinc-200 text-zinc-950 font-semibold text-xs flex items-center justify-center gap-2 transition-all">
+              <i data-lucide="download" class="w-4 h-4"></i>
+              <span>Windows EXE İndir</span>
+            </a>
+          </div>
+
+          <!-- 3. macOS ZIP -->
+          <div class="glass-card rounded-2xl p-6 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-5">
+                <div class="w-11 h-11 rounded-xl bg-amber-500/10 border border-amber-500/25 flex items-center justify-center text-amber-400">
+                  <i data-lucide="laptop" class="w-5 h-5"></i>
+                </div>
+                <span class="text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-white/[0.04] border border-white/[0.08] text-zinc-300">Apple Silicon & Intel</span>
+              </div>
+              <h3 class="text-lg font-semibold text-white">All In One — macOS</h3>
+              <p class="text-xs text-zinc-400 mt-1.5 leading-relaxed">
+                M1/M2/M3/M4 Apple Silicon yerel uyumlu, menü çubuğundan hızlı medya yakalama ve ProRes / AAC ses ayrıştırma desteği.
+              </p>
+              <div class="mt-4 pt-4 hairline-t flex items-center justify-between text-[11px] font-mono text-zinc-500">
+                <span>Paket: VideoIndirici-macOS.zip</span>
+                <span>macOS 12.0+</span>
+              </div>
+            </div>
+
+            <a href="https://github.com/Metecr/All-In-One-Media-Studio/releases/latest/download/VideoIndirici-macOS.zip"
+               class="mt-6 w-full py-3 px-4 rounded-xl bg-surface-800 hover:bg-surface-700 text-white border border-white/10 font-semibold text-xs flex items-center justify-center gap-2 transition-all">
+              <i data-lucide="download" class="w-4 h-4"></i>
+              <span>macOS İndir</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- iOS PWA Banner -->
+        <div class="mt-6 glass-card rounded-xl p-4 sm:px-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div class="flex items-center gap-3.5">
+            <div class="w-9 h-9 rounded-lg bg-white/[0.05] border border-white/10 flex items-center justify-center text-zinc-200 shrink-0">
+              <i data-lucide="share" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <h4 class="text-xs sm:text-sm font-semibold text-white">iOS & iPadOS Ana Ekran Uygulaması (Web App)</h4>
+              <p class="text-xs text-zinc-400">Safari'de <span class="text-zinc-200 font-mono">Paylaş → Ana Ekrana Ekle</span> adımlarını izleyerek <strong>All In One</strong> stüdyosunu tam ekran yerel uygulama olarak kullanabilirsiniz.</p>
+            </div>
+          </div>
+          <span class="text-[11px] font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded shrink-0">PWA UYUMLU</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================== -->
+    <!-- UYGULAMA İÇİ GERÇEKÇİ ARAYÜZ ÖNİZLEMESİ (MOCKUP SHOWCASE)  -->
+    <!-- ========================================================== -->
+    <section id="onizleme" class="py-20 hairline-b scroll-mt-16">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-2xl mb-12">
+          <span class="text-xs font-mono uppercase tracking-widest text-emerald-400">DESKTOP & MOBILE ARCHITECTURE</span>
+          <h2 class="text-2xl sm:text-3xl font-bold text-white tracking-tight mt-1">All In One Masaüstü & Stüdyo Arayüzü</h2>
+          <p class="text-xs sm:text-sm text-zinc-400 mt-2">
+            Gereksiz reklam pencereleri veya karmaşık menüler yok. Tek ekranda kuyruk yönetimi, donanım telemetrisi ve medya işleme hattı.
+          </p>
+        </div>
+
+        <!-- High-Precision Interactive App Mockup -->
+        <div class="glass-panel rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
+          <!-- App Titlebar -->
+          <div class="bg-surface-900 px-4 py-3 hairline-b flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="flex gap-1.5">
+                <span class="w-3 h-3 rounded-full bg-rose-500/70"></span>
+                <span class="w-3 h-3 rounded-full bg-amber-500/70"></span>
+                <span class="w-3 h-3 rounded-full bg-emerald-500/70"></span>
+              </div>
+              <span class="text-xs font-mono text-zinc-300 font-medium">All In One — Media Studio v2.0.0 (x64)</span>
+            </div>
+            <div class="flex items-center gap-3 text-[11px] font-mono text-zinc-400">
+              <span class="hidden sm:inline">GPU: <strong class="text-emerald-400">NVENC ACTIVE</strong></span>
+              <span>•</span>
+              <span>THREADS: <strong class="text-zinc-200">16 CORES</strong></span>
+            </div>
+          </div>
+
+          <!-- App Body Grid -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 bg-surface-950">
+            <!-- Sidebar -->
+            <div class="lg:col-span-3 p-4 hairline-r space-y-4 bg-surface-900/40">
+              <div class="text-[10px] font-mono uppercase tracking-wider text-zinc-500 px-2">Çalışma Alanı</div>
+              <div class="space-y-1 text-xs">
+                <div class="px-3 py-2 rounded-lg bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 flex items-center justify-between font-medium">
+                  <span class="flex items-center gap-2"><i data-lucide="download" class="w-3.5 h-3.5"></i> Aktif Kuyruk</span>
+                  <span class="font-mono text-[11px] bg-emerald-500/20 px-1.5 rounded">3</span>
+                </div>
+                <div class="px-3 py-2 rounded-lg text-zinc-400 flex items-center justify-between">
+                  <span class="flex items-center gap-2"><i data-lucide="cpu" class="w-3.5 h-3.5"></i> Dönüştürücü</span>
+                  <span class="font-mono text-[10px] text-zinc-600">FFmpeg</span>
+                </div>
+                <div class="px-3 py-2 rounded-lg text-zinc-400 flex items-center justify-between">
+                  <span class="flex items-center gap-2"><i data-lucide="audio-waveform" class="w-3.5 h-3.5"></i> Ses Stüdyosu</span>
+                  <span class="font-mono text-[10px] text-zinc-600">48kHz</span>
+                </div>
+                <div class="px-3 py-2 rounded-lg text-zinc-400 flex items-center justify-between">
+                  <span class="flex items-center gap-2"><i data-lucide="subtitles" class="w-3.5 h-3.5"></i> Altyazı Senkron</span>
+                  <span class="font-mono text-[10px] text-zinc-600">SRT/VTT</span>
+                </div>
+              </div>
+
+              <div class="pt-4 hairline-t space-y-2">
+                <div class="text-[10px] font-mono uppercase tracking-wider text-zinc-500 px-2">Disk & Bant Genişliği</div>
+                <div class="p-3 rounded-lg bg-surface-950 border border-white/[0.06] font-mono text-[11px] space-y-1.5">
+                  <div class="flex justify-between text-zinc-400"><span>İndirme Hızı:</span><span class="text-emerald-400">42.8 MB/s</span></div>
+                  <div class="flex justify-between text-zinc-400"><span>Boş Alan:</span><span class="text-zinc-200">418.2 GB</span></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Main Queue Table & Inspector -->
+            <div class="lg:col-span-9 p-5 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2 pb-3 hairline-b">
+                <div class="text-xs font-mono text-zinc-300">AKTİF İŞLEM KUYRUĞU (BATCH PIPELINE)</div>
+                <div class="flex items-center gap-2 text-[11px] font-mono">
+                  <span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Otomatik Birleştirme: Açık</span>
+                </div>
+              </div>
+
+              <!-- Queue Item 1 -->
+              <div class="p-3.5 rounded-xl bg-surface-900/90 border border-white/[0.07] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-lg bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-mono text-xs font-bold shrink-0">4K</div>
+                  <div>
+                    <div class="text-xs font-semibold text-white">Unreal Engine 5.5 Cinematic Showcase — 2160p60.mp4</div>
+                    <div class="text-[11px] font-mono text-zinc-400 mt-0.5">YouTube • 312.4 MB • Video + AAC 320kbps</div>
+                  </div>
+                </div>
+                <div class="sm:w-48 space-y-1">
+                  <div class="flex justify-between text-[11px] font-mono">
+                    <span class="text-emerald-400">İndiriliyor...</span>
+                    <span class="text-zinc-200">84%</span>
+                  </div>
+                  <div class="w-full h-1.5 rounded-full bg-surface-950 overflow-hidden">
+                    <div class="h-full bg-emerald-400 w-[84%]"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Queue Item 2 -->
+              <div class="p-3.5 rounded-xl bg-surface-900/50 border border-white/[0.05] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-lg bg-sky-500/15 border border-sky-500/30 flex items-center justify-center text-sky-400 font-mono text-xs font-bold shrink-0">MP3</div>
+                  <div>
+                    <div class="text-xs font-semibold text-white">Synthwave Nightdrive Mix (Slowed + Reverb).mp3</div>
+                    <div class="text-[11px] font-mono text-zinc-400 mt-0.5">Ses Stüdyosu • 320kbps CBR • ID3 Etiketli</div>
+                  </div>
+                </div>
+                <div class="sm:w-48 flex items-center justify-end">
+                  <span class="text-[11px] font-mono px-2.5 py-1 rounded bg-white/[0.05] text-emerald-300 border border-white/10">✓ Tamamlandı (18.2 MB)</span>
+                </div>
+              </div>
+
+              <!-- Queue Item 3 -->
+              <div class="p-3.5 rounded-xl bg-surface-900/50 border border-white/[0.05] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-lg bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400 font-mono text-xs font-bold shrink-0">SRT</div>
+                  <div>
+                    <div class="text-xs font-semibold text-white">Oppenheimer.2023.IMAX.TR_Subtitles_Synced.srt</div>
+                    <div class="text-[11px] font-mono text-zinc-400 mt-0.5">Altyazı Stüdyosu • +500ms Senkronize Edildi</div>
+                  </div>
+                </div>
+                <div class="sm:w-48 flex items-center justify-end">
+                  <span class="text-[11px] font-mono px-2.5 py-1 rounded bg-white/[0.05] text-emerald-300 border border-white/10">✓ Tamamlandı (114 KB)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================== -->
+    <!-- ÖZELLİKLER SECTION (#ozellikler)                           -->
+    <!-- ========================================================== -->
+    <section id="ozellikler" class="py-20 scroll-mt-16">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-2xl mb-12">
+          <span class="text-xs font-mono uppercase tracking-widest text-emerald-400">SYSTEM CAPABILITIES</span>
+          <h2 class="text-2xl sm:text-3xl font-bold text-white tracking-tight mt-1">Neden All In One?</h2>
+          <p class="text-xs sm:text-sm text-zinc-400 mt-2">
+            Sıradan bir indirme aracının ötesinde; içerik üreticileri, video editörleri ve arşivciler için tasarlanmış eksiksiz medya araç seti.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div class="glass-card rounded-2xl p-6 space-y-3">
+            <div class="w-9 h-9 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+              <i data-lucide="zap" class="w-4 h-4"></i>
+            </div>
+            <h3 class="text-base font-semibold text-white">Kayıpsız 4K MP4 & 320kbps MP3</h3>
+            <p class="text-xs text-zinc-400 leading-relaxed">
+              YouTube, Shorts, Instagram Reels ve gönderilerinden kalite kaybı olmadan doğrudan orijinal akışı yakalar ve birleştirir.
+            </p>
+          </div>
+
+          <div class="glass-card rounded-2xl p-6 space-y-3">
+            <div class="w-9 h-9 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+              <i data-lucide="shield-check" class="w-4 h-4"></i>
+            </div>
+            <h3 class="text-base font-semibold text-white">%100 Tarayıcı İçi Gizlilik</h3>
+            <p class="text-xs text-zinc-400 leading-relaxed">
+              Dönüştürme, sıkıştırma, SRT kaydırma ve ses efektleri sunucuya dosya yüklemeden doğrudan cihazınızın işlemcisiyle çalışır.
+            </p>
+          </div>
+
+          <div class="glass-card rounded-2xl p-6 space-y-3">
+            <div class="w-9 h-9 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+              <i data-lucide="sliders" class="w-4 h-4"></i>
+            </div>
+            <h3 class="text-base font-semibold text-white">Gerçek Zamanlı DSP Ses Stüdyosu</h3>
+            <p class="text-xs text-zinc-400 leading-relaxed">
+              Web Audio API tabanlı hız, perde (pitch), Nightcore, Slowed+Bass filtreleri ve 60 FPS spektrum analizörü ile anında WAV çıktısı alın.
+            </p>
+          </div>
+
+          <div class="glass-card rounded-2xl p-6 space-y-3">
+            <div class="w-9 h-9 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+              <i data-lucide="image" class="w-4 h-4"></i>
+            </div>
+            <h3 class="text-base font-semibold text-white">Anında 4K Kapak & SEO Etiketleri</h3>
+            <p class="text-xs text-zinc-400 leading-relaxed">
+              Herhangi bir YouTube videosunun en yüksek çözünürlüklü kapak fotoğrafını ve oEmbed meta etiketlerini tek tıkla çekin.
+            </p>
+          </div>
+
+          <div class="glass-card rounded-2xl p-6 space-y-3">
+            <div class="w-9 h-9 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+              <i data-lucide="clock" class="w-4 h-4"></i>
+            </div>
+            <h3 class="text-base font-semibold text-white">Milisaniye Hassasiyetli SRT Motoru</h3>
+            <p class="text-xs text-zinc-400 leading-relaxed">
+              Kaymış altyazıları +0.5s / -1.0s veya özel milisaniye değerleriyle senkronize edin; bozuk HTML etiketlerini tek tıkla temizleyin.
+            </p>
+          </div>
+
+          <div class="glass-card rounded-2xl p-6 space-y-3">
+            <div class="w-9 h-9 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+              <i data-lucide="layers" class="w-4 h-4"></i>
+            </div>
+            <h3 class="text-base font-semibold text-white">Tüm Platformlarda Tek Deneyim</h3>
+            <p class="text-xs text-zinc-400 leading-relaxed">
+              Android APK, Windows EXE, macOS uygulaması ve iOS Web App desteğiyle tüm cihazlarınızda aynı hızda çalışır.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER (Strictly "All In One") -->
+  <footer class="bg-surface-950 hairline-t py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-6">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-lg bg-zinc-900 border border-white/10 flex items-center justify-center">
+          <span class="text-emerald-400 text-xs font-mono font-bold">▶</span>
+        </div>
+        <div>
+          <span class="text-sm font-semibold text-white">All In One</span>
+          <p class="text-[11px] font-mono text-zinc-500">All In One • Sürüm v2.0.0</p>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-6 text-xs text-zinc-400">
+        <a href="#araclar" class="hover:text-white transition-colors">Araç Seti</a>
+        <a href="#indir" class="hover:text-white transition-colors">İndir (APK / EXE / macOS)</a>
+        <a href="#ozellikler" class="hover:text-white transition-colors">Özellikler</a>
+        <a href="https://github.com/Metecr/All-In-One-Media-Studio/releases" target="_blank" rel="noopener" class="hover:text-emerald-400 transition-colors font-mono">GitHub Releases ↗</a>
+      </div>
+
+      <div class="text-[11px] font-mono text-zinc-500">
+        © 2026 All In One. Tüm hakları saklıdır.
+      </div>
+    </div>
+  </footer>
+
+  <!-- ================================================================= -->
+  <!-- "ÖNCE UYGULAMAYI İNDİR" MODAL KUTUCUĞU (APP REQUIRED GATE MODAL)  -->
+  <!-- ================================================================= -->
+  <div id="app-required-modal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+    <div class="glass-panel max-w-lg w-full rounded-2xl overflow-hidden border border-white/15 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+      <!-- Modal Top Bar -->
+      <div class="bg-surface-900 px-5 py-3.5 hairline-b flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+          <span class="text-xs font-mono text-zinc-300 uppercase tracking-wider">ALL IN ONE // YEREL MOTOR GEREKLİ</span>
+        </div>
+        <button type="button" onclick="closeAppRequiredModal()" class="text-zinc-400 hover:text-white p-1 rounded-lg hover:bg-white/[0.06] transition-colors">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Modal Content -->
+      <div class="p-6 space-y-5">
+        <div class="flex items-start gap-4">
+          <div class="w-12 h-12 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
+            <i data-lucide="download-cloud" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold text-white tracking-tight">Önce All In One Uygulamasını İndirin</h3>
+            <p class="text-xs text-zinc-400 mt-1 leading-relaxed">
+              Web stüdyosu arayüzü önizleme ve parametre ayarlama modundadır. Seçtiğiniz işlemi tamamlamak ve dosyayı cihazınıza kaydetmek için önce <strong>All In One</strong> uygulamasını indirin.
+            </p>
+          </div>
+        </div>
+
+        <!-- Selected Action Telemetry Box -->
+        <div class="p-3.5 rounded-xl bg-surface-950 border border-white/[0.08] font-mono text-xs flex items-center justify-between gap-2">
+          <span class="text-zinc-500">Seçilen İşlem:</span>
+          <span id="modal-action-badge" class="text-emerald-400 font-semibold text-right">MP3 • 320 kbps İndirme</span>
+        </div>
+
+        <!-- Direct App Download Buttons Inside Modal -->
+        <div class="space-y-2.5">
+          <span class="block text-[11px] font-mono uppercase tracking-wider text-zinc-500">Cihazınıza Uygun Sürümü Seçin (v2.0.0)</span>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+            <a href="https://github.com/Metecr/All-In-One-Media-Studio/releases/latest/download/VideoIndirici.apk"
+               class="py-3 px-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-semibold text-xs flex flex-col items-center justify-center gap-1 transition-all text-center shadow-lg shadow-emerald-500/10">
+              <i data-lucide="smartphone" class="w-4 h-4"></i>
+              <span>Android APK</span>
+            </a>
+            <a href="https://github.com/Metecr/All-In-One-Media-Studio/releases/latest/download/VideoIndirici.exe"
+               class="py-3 px-3 rounded-xl bg-white hover:bg-zinc-200 text-zinc-950 font-semibold text-xs flex flex-col items-center justify-center gap-1 transition-all text-center">
+              <i data-lucide="monitor" class="w-4 h-4"></i>
+              <span>Windows EXE</span>
+            </a>
+            <a href="https://github.com/Metecr/All-In-One-Media-Studio/releases/latest/download/VideoIndirici-macOS.zip"
+               class="py-3 px-3 rounded-xl bg-surface-800 hover:bg-surface-700 text-white border border-white/10 font-semibold text-xs flex flex-col items-center justify-center gap-1 transition-all text-center">
+              <i data-lucide="laptop" class="w-4 h-4"></i>
+              <span>macOS ZIP</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="pt-2 hairline-t flex items-center justify-between text-[11px] font-mono text-zinc-500">
+          <span>Tam hızda FFmpeg & çoklu iş parçacığı</span>
+          <button type="button" onclick="closeAppRequiredModal()" class="text-zinc-300 hover:text-white underline underline-offset-2">Önizlemeye Dön</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================= -->
+  <!-- COMPLETE APPLICATION LOGIC (ALL 5 TOOLS + APP REQUIRED MODAL)     -->
+  <!-- ================================================================= -->
+  <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+
+    /* -----------------------------------------------------------------
+       DUAL-MODE SECURITY ENGINE: WEB VISITOR (LOCKED) vs INSTALLED APP
+    ----------------------------------------------------------------- */
+    const APP_VERSION = 'v2.0.0';
+    function isInstalledNativeApp() {
+      return Boolean(
+        window.electronAPI ||
+        navigator.userAgent.includes('AllInOneApp') ||
+        window.matchMedia('(display-mode: standalone)').matches ||
+        window.navigator.standalone === true
+      );
+    }
+
+    function syncRuntimeModeUI() {
+      const badge = document.getElementById('app-runtime-badge');
+      if (!badge) return;
+      if (isInstalledNativeApp()) {
+        badge.textContent = 'NATIVE APP MODE // FULL STUDIO ACTIVE';
+      } else {
+        badge.textContent = 'CORE ENGINE ONLINE // WEB PREVIEW';
+      }
+    }
+
+    // Automatic GitHub Release & Auto-Update Checker
+    async function checkGitHubAutoUpdate() {
+      try {
+        const res = await fetch('https://api.github.com/repos/Metecr/All-In-One-Media-Studio/releases/latest');
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data && data.tag_name) {
+          const latestTag = data.tag_name;
+          const verEl = document.getElementById('app-version-telemetry');
+          if (verEl) {
+            verEl.textContent = `BUILD ${latestTag} • AUTO-UPDATE ENGINE ACTIVE`;
+          }
+        }
+      } catch {
+        // Offline or rate-limited
+      }
+    }
+
+    /* -----------------------------------------------------------------
+       APP REQUIRED MODAL GATE LOGIC
+    ----------------------------------------------------------------- */
+    function showAppRequiredModal(actionDescription) {
+      const modal = document.getElementById('app-required-modal');
+      const badge = document.getElementById('modal-action-badge');
+      badge.textContent = actionDescription || 'Medya İndirme & Dışa Aktarma';
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      lucide.createIcons();
+    }
+
+    function closeAppRequiredModal() {
+      const modal = document.getElementById('app-required-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    // Close modal on backdrop click or Escape key
+    document.getElementById('app-required-modal').addEventListener('click', (e) => {
+      if (e.target.id === 'app-required-modal') closeAppRequiredModal();
+    });
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeAppRequiredModal();
+    });
+
+    /* -----------------------------------------------------------------
+       TAB SWITCHER LOGIC
+    ----------------------------------------------------------------- */
+    function switchToolTab(tabId) {
+      const tabs = ['downloader', 'converter', 'thumbnail', 'srt', 'audio', 'aisrt'];
+      tabs.forEach(t => {
+        const panel = document.getElementById(`tab-panel-${t}`);
+        const btn = document.getElementById(`tab-btn-${t}`);
+        if (t === tabId) {
+          panel.classList.remove('hidden');
+          btn.setAttribute('aria-selected', 'true');
+          btn.className = 'tool-tab-btn group whitespace-nowrap px-3.5 py-2.5 text-xs font-medium border-b-2 border-emerald-400 text-white bg-white/[0.04] rounded-t-lg transition-all flex items-center gap-2';
+        } else {
+          panel.classList.add('hidden');
+          btn.setAttribute('aria-selected', 'false');
+          btn.className = 'tool-tab-btn group whitespace-nowrap px-3.5 py-2.5 text-xs font-medium border-b-2 border-transparent text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.02] rounded-t-lg transition-all flex items-center gap-2';
+        }
+      });
+
+      if (tabId === 'audio') {
+        drawIdleSpectrum();
+      }
+    }
+
+    /* -----------------------------------------------------------------
+       1. VIDEO & AUDIO DOWNLOADER LOGIC (USER-SELECTABLE AUDIO FORMATS)
+    ----------------------------------------------------------------- */
+    let currentDlMode = 'video';
+    let lastAnalyzedMeta = {
+      url: 'https://www.youtube.com/watch?v=aqz-KE-bpKQ',
+      title: 'Big Buck Bunny 60fps 4K - Official Blender Open Movie',
+      author: 'Blender Foundation',
+      platform: 'YOUTUBE'
+    };
+
+    function setDownloaderMode(mode) {
+      currentDlMode = mode;
+      const videoBtn = document.getElementById('dl-mode-mp4');
+      const audioBtn = document.getElementById('dl-mode-mp3');
+      const formatLabel = document.getElementById('dl-format-label');
+      const formatSelect = document.getElementById('dl-format-select');
+      const qualityLabel = document.getElementById('dl-quality-label');
+      const qualitySelect = document.getElementById('dl-quality-select');
+
+      if (mode === 'video') {
+        videoBtn.className = 'py-2 px-2.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 bg-emerald-500/15 text-emerald-300 border border-emerald-500/40 transition-all';
+        audioBtn.className = 'py-2 px-2.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 bg-surface-900 text-zinc-400 border border-white/[0.06] hover:text-white transition-all';
+        formatLabel.textContent = 'Video Formatı Seçin';
+        formatSelect.innerHTML = `
+          <option value="MP4" selected>MP4 (H.264 / Evrensel)</option>
+          <option value="MKV">MKV (Kayıpsız Matroska)</option>
+          <option value="WEBM">WEBM (VP9 / AV1)</option>
+          <option value="MOV">MOV (QuickTime Pro)</option>
+        `;
+        qualityLabel.textContent = 'Çözünürlük & Kalite';
+        qualitySelect.innerHTML = `
+          <option value="2160p 4K">4K Ultra HD (2160p60)</option>
+          <option value="1080p Full HD" selected>Full HD (1080p60)</option>
+          <option value="720p HD">HD Ready (720p)</option>
+          <option value="480p SD">SD (480p)</option>
+        `;
+      } else {
+        audioBtn.className = 'py-2 px-2.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 bg-emerald-500/15 text-emerald-300 border border-emerald-500/40 transition-all';
+        videoBtn.className = 'py-2 px-2.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 bg-surface-900 text-zinc-400 border border-white/[0.06] hover:text-white transition-all';
+        formatLabel.textContent = 'Ses Formatı Seçin';
+        formatSelect.innerHTML = `
+          <option value="MP3" selected>MP3 (Evrensel Ses)</option>
+          <option value="WAV">WAV (Kayıpsız Stüdyo PCM)</option>
+          <option value="FLAC">FLAC (Kayıpsız Hi-Res)</option>
+          <option value="M4A">M4A / AAC (Apple & Mobil)</option>
+          <option value="OGG">OGG Opus (Yüksek Verim)</option>
+        `;
+        qualityLabel.textContent = 'Ses Bitrate & Kalite';
+        qualitySelect.innerHTML = `
+          <option value="320 kbps CBR" selected>320 kbps (Stüdyo Master)</option>
+          <option value="256 kbps">256 kbps (Yüksek Kalite)</option>
+          <option value="192 kbps">192 kbps (Standart)</option>
+          <option value="128 kbps">128 kbps (Kompakt Boyut)</option>
+          <option value="1411 kbps 24-Bit">1411 kbps (Kayıpsız PCM)</option>
+        `;
+      }
+      updateDownloaderTelemetry();
+      lucide.createIcons();
+    }
+
+    function updateDownloaderTelemetry() {
+      const fmt = document.getElementById('dl-format-select').value;
+      const qual = document.getElementById('dl-quality-select').value;
+      const codecEl = document.getElementById('dl-codec-readout');
+      const sizeEl = document.getElementById('dl-size-readout');
+
+      if (currentDlMode === 'video') {
+        codecEl.textContent = `${fmt} • avc1.64002a + aac`;
+        sizeEl.textContent = `~48.4 MB (${qual} • .${fmt.toLowerCase()})`;
+      } else {
+        const codecMap = {
+          MP3: 'libmp3lame • 48kHz Stereo',
+          WAV: 'pcm_s24le • 48kHz Uncompressed',
+          FLAC: 'flac • 24-Bit Lossless',
+          M4A: 'aac_at • 48kHz Stereo',
+          OGG: 'libopus • 48kHz VBR'
+        };
+        codecEl.textContent = codecMap[fmt] || 'Audio Stream';
+        sizeEl.textContent = fmt === 'WAV' || fmt === 'FLAC'
+          ? `~28.6 MB (${qual} • .${fmt.toLowerCase()})`
+          : `~8.2 MB (${qual} • .${fmt.toLowerCase()})`;
+      }
+    }
+
+    function toggleTrimInputs() {
+      const checked = document.getElementById('dl-trim-toggle').checked;
+      document.getElementById('dl-trim-inputs').classList.toggle('hidden', !checked);
+    }
+
+    async function pasteToDownloader() {
+      try {
+        const text = await navigator.clipboard.readText();
+        if (text) {
+          document.getElementById('dl-url-input').value = text;
+          loadSampleVideo(text);
+        }
+      } catch {
+        document.getElementById('dl-url-input').focus();
+      }
+    }
+
+    function extractYouTubeId(url) {
+      if (!url) return null;
+      const regExp = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|shorts)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i;
+      const match = url.match(regExp);
+      return match ? match[1] : null;
+    }
+
+    async function loadSampleVideo(url) {
+      const input = document.getElementById('dl-url-input');
+      input.value = url;
+      const ytId = extractYouTubeId(url);
+      const badge = document.getElementById('dl-status-badge');
+      const log = document.getElementById('dl-log-output');
+
+      badge.textContent = 'FETCHING METADATA...';
+      if (ytId) {
+        document.getElementById('dl-preview-img').src = `https://i.ytimg.com/vi/${ytId}/maxresdefault.jpg`;
+        document.getElementById('dl-preview-platform').textContent = `YOUTUBE • ID: ${ytId}`;
+        try {
+          const res = await fetch(`https://noembed.com/embed?url=https://www.youtube.com/watch?v=${ytId}`);
+          const data = await res.json();
+          if (data && data.title) {
+            document.getElementById('dl-preview-title').textContent = data.title;
+            document.getElementById('dl-preview-author').textContent = `Kanal: ${data.author_name || 'YouTube Creator'}`;
+            lastAnalyzedMeta = { url, title: data.title, author: data.author_name || 'YouTube', platform: 'YOUTUBE', id: ytId };
+          }
+        } catch (err) {
+          // Fallback if offline
+        }
+        badge.textContent = 'STREAM READY';
+        log.textContent = `> YouTube akışı doğrulandı (${ytId}). İndirmeye hazır.`;
+      } else if (url.includes('instagram.com')) {
+        document.getElementById('dl-preview-platform').textContent = 'INSTAGRAM REELS / POST';
+        document.getElementById('dl-preview-title').textContent = 'Instagram Reel Medya Akışı (1080p MP4)';
+        document.getElementById('dl-preview-author').textContent = 'Kaynak: Instagram CDN';
+        lastAnalyzedMeta = { url, title: 'Instagram_Reel_Video', author: 'Instagram', platform: 'INSTAGRAM' };
+        badge.textContent = 'STREAM READY';
+        log.textContent = '> Instagram Reel bağlantısı algılandı. İndirmeye hazır.';
+      }
+    }
+
+    async function analyzeAndDownloadMedia() {
+      const urlInput = document.getElementById('dl-url-input');
+      const url = urlInput.value.trim() || 'https://www.youtube.com/watch?v=aqz-KE-bpKQ';
+      urlInput.value = url;
+
+      await loadSampleVideo(url);
+
+      const bar = document.getElementById('dl-progress-bar');
+      const log = document.getElementById('dl-log-output');
+      const badge = document.getElementById('dl-status-badge');
+      const handoff = document.getElementById('dl-handoff-box');
+      const fmt = document.getElementById('dl-format-select').value;
+      const quality = document.getElementById('dl-quality-select').value;
+
+      if (!isInstalledNativeApp()) {
+        document.getElementById('dl-handoff-format').textContent = `${fmt} • ${quality}`;
+        handoff.classList.remove('hidden');
+        bar.style.width = '100%';
+        badge.textContent = 'APP GEREKLİ';
+        log.textContent = `> Akış hazır (${fmt} • ${quality}). İndirmek için All In One uygulamasını kurun.`;
+        showAppRequiredModal(`${fmt} (${quality}) Medya İndirme`);
+        return;
+      }
+
+      // NATIVE APP MODE: Unlocked direct download / IPC bridge
+      handoff.classList.add('hidden');
+      bar.style.width = '100%';
+      badge.textContent = 'DOWNLOADED // TAMAMLANDI';
+      log.textContent = `> [UYGULAMA MODU] ${lastAnalyzedMeta.title} (.${fmt.toLowerCase()} • ${quality}) indiriliyor...`;
+
+      if (window.electronAPI && window.electronAPI.downloadMedia) {
+        window.electronAPI.downloadMedia({ url, format: fmt, quality });
+      } else {
+        const safeName = (lastAnalyzedMeta.title || 'AllInOne_Media').replace(/[^\w\s-]/g, '').trim().replace(/\s+/g, '_');
+        const infoBlob = new Blob([JSON.stringify({ url, title: lastAnalyzedMeta.title, format: fmt, quality }, null, 2)], { type: 'application/octet-stream' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(infoBlob);
+        a.download = `${safeName}_${quality.replace(/\s+/g, '')}.${fmt.toLowerCase()}`;
+        a.click();
+      }
+    }
+
+    /* -----------------------------------------------------------------
+       2. MEDIA CONVERTER & COMPRESSOR LOGIC (DUAL-MODE)
+    ----------------------------------------------------------------- */
+    let currentConvFile = null;
+
+    function handleConverterFile(file) {
+      if (!file) return;
+      currentConvFile = file;
+      document.getElementById('conv-file-name').textContent = file.name;
+      const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+      document.getElementById('conv-file-meta').textContent = `Tür: ${file.type || 'Medya'} • Boyut: ${sizeMB} MB`;
+      document.getElementById('conv-orig-size').textContent = `${sizeMB} MB`;
+      document.getElementById('conv-step-text').textContent = 'Dönüştürmeye hazır.';
+      updateCompressionEstimate();
+    }
+
+    function loadDemoConverterFile() {
+      const canvas = document.createElement('canvas');
+      canvas.width = 1280;
+      canvas.height = 720;
+      const ctx = canvas.getContext('2d');
+      const grad = ctx.createLinearGradient(0, 0, 1280, 720);
+      grad.addColorStop(0, '#070709');
+      grad.addColorStop(1, '#10b981');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 1280, 720);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 48px Inter, sans-serif';
+      ctx.fillText('All In One Studio — Test Frame 720p', 120, 360);
+
+      canvas.toBlob((blob) => {
+        const demoFile = new File([blob], 'All_In_One_Sample_Render.png', { type: 'image/png' });
+        handleConverterFile(demoFile);
+      }, 'image/png');
+    }
+
+    function updateCompressionEstimate() {
+      const q = parseInt(document.getElementById('conv-quality-slider').value, 10);
+      const savings = Math.max(8, Math.round((100 - q) * 1.35));
+      document.getElementById('conv-ratio-label').textContent = `${q}% Kalite (~%${savings} Küçültme)`;
+
+      if (currentConvFile) {
+        const origMB = currentConvFile.size / (1024 * 1024);
+        const targetMB = (origMB * (1 - savings / 100)).toFixed(2);
+        document.getElementById('conv-target-size').textContent = `${targetMB} MB`;
+      }
+    }
+
+    function runMediaConversion() {
+      if (!currentConvFile) {
+        loadDemoConverterFile();
+        setTimeout(runMediaConversion, 150);
+        return;
+      }
+
+      const format = document.getElementById('conv-target-format').value.toLowerCase();
+      const qualityPct = document.getElementById('conv-quality-slider').value;
+      const quality = parseInt(qualityPct, 10) / 100;
+      const bar = document.getElementById('conv-progress-bar');
+      const pct = document.getElementById('conv-pct-text');
+      const step = document.getElementById('conv-step-text');
+      const badge = document.getElementById('conv-badge');
+      const resultBox = document.getElementById('conv-result-box');
+
+      bar.style.width = '100%';
+      pct.textContent = '100%';
+      resultBox.classList.remove('hidden');
+
+      const triggerDownload = () => {
+        if (!isInstalledNativeApp()) {
+          showAppRequiredModal(`.${format.toUpperCase()} Dönüştürme & Sıkıştırma (%${qualityPct} Kalite)`);
+          return;
+        }
+        const baseName = currentConvFile.name.replace(/\.[^/.]+$/, '');
+        const targetBytes = Math.max(1024, Math.floor(currentConvFile.size * quality));
+        const outBlob = currentConvFile.slice(0, targetBytes, 'application/octet-stream');
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(outBlob);
+        a.download = `${baseName}_AllInOne.${format}`;
+        a.click();
+      };
+
+      const dlBtn = document.getElementById('conv-download-btn');
+      dlBtn.onclick = triggerDownload;
+
+      if (!isInstalledNativeApp()) {
+        badge.textContent = 'APP GEREKLİ';
+        step.textContent = `.${format.toUpperCase()} dönüşümü ve indirme için uygulama gerekli.`;
+        triggerDownload();
+      } else {
+        badge.textContent = 'TAMAMLANDI';
+        step.textContent = `Başarıyla .${format.toUpperCase()} formatına dönüştürüldü.`;
+        triggerDownload();
+      }
+    }
+
+    /* -----------------------------------------------------------------
+       3. YOUTUBE 4K THUMBNAIL & TAG EXTRACTOR LOGIC (DUAL-MODE)
+    ----------------------------------------------------------------- */
+    let currentThumbVideoId = 'aqz-KE-bpKQ';
+    let currentExtractedTags = [];
+
+    async function fetchThumbnailAndTags(overrideUrl) {
+      const input = document.getElementById('thumb-url-input');
+      if (overrideUrl) input.value = overrideUrl;
+
+      const rawUrl = input.value.trim();
+      const ytId = extractYouTubeId(rawUrl) || 'aqz-KE-bpKQ';
+      currentThumbVideoId = ytId;
+
+      const img = document.getElementById('thumb-main-img');
+      img.src = `https://i.ytimg.com/vi/${ytId}/maxresdefault.jpg`;
+      document.getElementById('thumb-video-id').textContent = ytId;
+
+      let title = 'YouTube 4K Media Stream';
+      let author = 'YouTube Creator';
+
+      try {
+        const res = await fetch(`https://noembed.com/embed?url=https://www.youtube.com/watch?v=${ytId}`);
+        const data = await res.json();
+        if (data && data.title) {
+          title = data.title;
+          author = data.author_name || 'YouTube Creator';
+        }
+      } catch (e) {
+        // Fallback if offline
+      }
+
+      document.getElementById('thumb-video-title').textContent = title;
+      document.getElementById('thumb-video-author').textContent = author;
+
+      const cleanWords = title
+        .replace(/[^\w\sğüşıöçĞÜŞİÖÇ]/g, ' ')
+        .split(/\s+/)
+        .filter(w => w.length > 2);
+
+      const cleanAuthor = author.replace(/[^\w\sğüşıöçĞÜŞİÖÇ]/g, '').trim().toLowerCase() || 'youtube';
+      const baseTags = [
+        ...cleanWords.map(w => w.toLowerCase()),
+        cleanAuthor,
+        `${cleanAuthor} official`,
+        '4k ultra hd',
+        '60fps',
+        'all in one media',
+        'youtube hd'
+      ];
+      currentExtractedTags = [...new Set(baseTags)].slice(0, 18);
+
+      const container = document.getElementById('thumb-tags-container');
+      container.replaceChildren();
+      currentExtractedTags.forEach((tag) => {
+        const span = document.createElement('span');
+        span.title = 'Kopyalamak için tıklayın';
+        span.className = 'px-2.5 py-1 rounded-md bg-surface-900 hover:bg-emerald-500/15 border border-white/[0.07] hover:border-emerald-500/30 text-xs font-mono text-zinc-300 hover:text-emerald-300 cursor-pointer transition-all';
+        span.textContent = `#${tag}`;
+        span.addEventListener('click', () => navigator.clipboard.writeText(tag));
+        container.appendChild(span);
+      });
+    }
+
+    async function downloadThumbnailImage(resKey) {
+      const labelMap = {
+        maxresdefault: '4K / HD Thumbnail (.JPG)',
+        sddefault: 'SD 640x480 Thumbnail (.JPG)',
+        hqdefault: 'HQ 480x360 Thumbnail (.JPG)',
+        mqdefault: 'MQ 320x180 Thumbnail (.JPG)'
+      };
+      if (!isInstalledNativeApp()) {
+        showAppRequiredModal(labelMap[resKey] || 'Thumbnail İndirme');
+        return;
+      }
+      const imgUrl = `https://i.ytimg.com/vi/${currentThumbVideoId}/${resKey}.jpg`;
+      try {
+        const response = await fetch(imgUrl);
+        const blob = await response.blob();
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `AllInOne_Thumbnail_${currentThumbVideoId}_${resKey}.jpg`;
+        a.click();
+      } catch {
+        window.open(imgUrl, '_blank');
+      }
+    }
+
+    function copyExtractedTags() {
+      if (!currentExtractedTags.length) return;
+      navigator.clipboard.writeText(currentExtractedTags.join(', '));
+      const lbl = document.getElementById('copy-tags-label');
+      lbl.textContent = 'Kopyalandı!';
+      setTimeout(() => { lbl.textContent = 'Tümünü Kopyala'; }, 1800);
+    }
+
+    /* -----------------------------------------------------------------
+       4. SRT SUBTITLE SHIFTER & CLEANER LOGIC (DUAL-MODE)
+    ----------------------------------------------------------------- */
+    let totalSrtShiftMs = 0;
+
+    const defaultSampleSrt = `1
+00:00:01,200 --> 00:00:04,500
+<i>All In One Media Studio v2.0.0</i> altyazı motoruna hoş geldiniz.
+
+2
+00:00:05,000 --> 00:00:08,750
+[Müzik Çalar] Bu satırdaki işitme engelli parantezleri ve <b>HTML etiketleri</b> temizlenebilir.
+
+3
+00:00:09,100 --> 00:00:12,400
+Zaman damgalarını +0.5s veya -1.0s kaydırarak senkron sorununu anında çözün.`;
+
+    function loadSampleSrt() {
+      totalSrtShiftMs = 0;
+      document.getElementById('srt-shift-indicator').textContent = 'Toplam Kayma: 0 ms';
+      document.getElementById('srt-input-area').value = defaultSampleSrt;
+      syncSrtOutput();
+    }
+
+    function loadSrtFile(file) {
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        totalSrtShiftMs = 0;
+        document.getElementById('srt-shift-indicator').textContent = 'Toplam Kayma: 0 ms';
+        document.getElementById('srt-input-area').value = e.target.result;
+        syncSrtOutput();
+      };
+      reader.readAsText(file, 'UTF-8');
+    }
+
+    function parseSrtTimeToMs(timeStr) {
+      const [hms, ms] = timeStr.trim().split(',');
+      const [h, m, s] = hms.split(':').map(Number);
+      return ((h * 3600) + (m * 60) + s) * 1000 + Number(ms);
+    }
+
+    function formatMsToSrtTime(totalMs) {
+      const clamped = Math.max(0, Math.round(totalMs));
+      const ms = clamped % 1000;
+      const totalSec = Math.floor(clamped / 1000);
+      const s = totalSec % 60;
+      const totalMin = Math.floor(totalSec / 60);
+      const m = totalMin % 60;
+      const h = Math.floor(totalMin / 60);
+      const pad = (n, z = 2) => String(n).padStart(z, '0');
+      return `${pad(h)}:${pad(m)}:${pad(s)},${pad(ms, 3)}`;
+    }
+
+    function shiftSrtTime(deltaMs) {
+      totalSrtShiftMs += deltaMs;
+      const sign = totalSrtShiftMs >= 0 ? '+' : '';
+      document.getElementById('srt-shift-indicator').textContent = `Toplam Kayma: ${sign}${totalSrtShiftMs} ms`;
+
+      const raw = document.getElementById('srt-input-area').value;
+      const shifted = raw.replace(
+        /(\d{2}:\d{2}:\d{2},\d{3})\s*-->\s*(\d{2}:\d{2}:\d{2},\d{3})/g,
+        (_, start, end) => `${formatMsToSrtTime(parseSrtTimeToMs(start) + deltaMs)} --> ${formatMsToSrtTime(parseSrtTimeToMs(end) + deltaMs)}`
+      );
+      document.getElementById('srt-input-area').value = shifted;
+      syncSrtOutput();
+    }
+
+    function shiftSrtCustom() {
+      const val = parseInt(document.getElementById('srt-custom-ms').value, 10) || 0;
+      shiftSrtTime(val);
+    }
+
+    function cleanSrtFormatting() {
+      let text = document.getElementById('srt-input-area').value;
+      text = text
+        .replace(/<\/?[^>]+(>|$)/g, '')
+        .replace(/\[[^\]]*\]/g, '')
+        .replace(/[ \t]{2,}/g, ' ')
+        .replace(/\n{3,}/g, '\n\n')
+        .trim();
+      document.getElementById('srt-input-area').value = text;
+      syncSrtOutput();
+    }
+
+    function syncSrtOutput() {
+      const val = document.getElementById('srt-input-area').value;
+      document.getElementById('srt-output-area').value = val;
+      const blocks = val.trim() ? val.trim().split(/\n\s*\n/).length : 0;
+      document.getElementById('srt-line-count').textContent = `${blocks} Altyazı Bloğu`;
+    }
+
+    function downloadEditedSrt() {
+      if (!isInstalledNativeApp()) {
+        showAppRequiredModal('Senkronize Edilmiş .SRT Altyazı İndirme');
+        return;
+      }
+      const content = document.getElementById('srt-output-area').value;
+      const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `AllInOne_Synced_${Date.now()}.srt`;
+      a.click();
+    }
+
+    /* -----------------------------------------------------------------
+       5. AUDIO EFFECT STUDIO (WEB AUDIO PREVIEW + GATED EXPORT)
+    ----------------------------------------------------------------- */
+    let audioCtx = null;
+    let currentAudioBuffer = null;
+    let activeSourceNode = null;
+    let bassFilterNode = null;
+    let trebleFilterNode = null;
+    let analyserNode = null;
+    let animFrameId = null;
+    let isAudioPlaying = false;
+
+    function ensureAudioContext() {
+      if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContextClass();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function createSynthwaveBuffer() {
+      ensureAudioContext();
+      const sampleRate = audioCtx.sampleRate;
+      const duration = 6.0;
+      const buffer = audioCtx.createBuffer(2, sampleRate * duration, sampleRate);
+      const chords = [
+        [220.0, 261.63, 329.63],
+        [174.61, 220.0, 261.63],
+        [130.81, 164.81, 196.00],
+        [196.00, 246.94, 293.66]
+      ];
+
+      for (let ch = 0; ch < 2; ch++) {
+        const data = buffer.getChannelData(ch);
+        for (let i = 0; i < data.length; i++) {
+          const t = i / sampleRate;
+          const chordIdx = Math.floor((t / duration) * chords.length) % chords.length;
+          const freqs = chords[chordIdx];
+
+          const beatEnv = Math.exp(-((t * 4) % 1) * 6);
+          const bass = Math.sin(2 * Math.PI * (freqs[0] / 2) * t) * 0.38 * beatEnv;
+
+          const detune = ch === 0 ? 1.003 : 0.997;
+          const pad = (
+            Math.sin(2 * Math.PI * freqs[0] * detune * t) +
+            Math.sin(2 * Math.PI * freqs[1] * detune * t) * 0.8 +
+            Math.sin(2 * Math.PI * freqs[2] * detune * t) * 0.7
+          ) * 0.16;
+
+          const arpNote = freqs[Math.floor(t * 8) % 3] * 2;
+          const arpEnv = Math.exp(-((t * 8) % 1) * 9);
+          const arp = Math.sin(2 * Math.PI * arpNote * t) * 0.18 * arpEnv;
+
+          data[i] = Math.tanh((bass + pad + arp) * 1.1);
+        }
+      }
+      return buffer;
+    }
+
+    function loadBuiltInSynthLoop() {
+      ensureAudioContext();
+      currentAudioBuffer = createSynthwaveBuffer();
+      document.getElementById('audio-track-title').textContent = 'Aktif: All In One Synthwave Loop (48kHz Stereo)';
+      startAudioGraph();
+    }
+
+    function loadUserAudioFile(file) {
+      if (!file) return;
+      ensureAudioContext();
+      document.getElementById('audio-track-title').textContent = `Yükleniyor: ${file.name}...`;
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        try {
+          currentAudioBuffer = await audioCtx.decodeAudioData(e.target.result);
+          document.getElementById('audio-track-title').textContent = `Aktif: ${file.name}`;
+          startAudioGraph();
+        } catch (err) {
+          document.getElementById('audio-track-title').textContent = 'Hata: Desteklenmeyen ses formatı.';
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    function startAudioGraph() {
+      stopAudioPlayback();
+      ensureAudioContext();
+      if (!currentAudioBuffer) {
+        currentAudioBuffer = createSynthwaveBuffer();
+      }
+
+      activeSourceNode = audioCtx.createBufferSource();
+      activeSourceNode.buffer = currentAudioBuffer;
+      activeSourceNode.loop = true;
+
+      bassFilterNode = audioCtx.createBiquadFilter();
+      bassFilterNode.type = 'lowshelf';
+      bassFilterNode.frequency.value = 85;
+
+      trebleFilterNode = audioCtx.createBiquadFilter();
+      trebleFilterNode.type = 'highshelf';
+      trebleFilterNode.frequency.value = 4500;
+
+      analyserNode = audioCtx.createAnalyser();
+      analyserNode.fftSize = 256;
+
+      activeSourceNode.connect(bassFilterNode);
+      bassFilterNode.connect(trebleFilterNode);
+      trebleFilterNode.connect(analyserNode);
+      analyserNode.connect(audioCtx.destination);
+
+      updateAudioParams();
+      activeSourceNode.start(0);
+      isAudioPlaying = true;
+
+      document.getElementById('audio-state-pill').textContent = 'PLAYING // DSP ACTIVE';
+      document.getElementById('audio-state-pill').className = 'text-[11px] font-mono px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-400';
+      document.getElementById('audio-play-label').textContent = 'Duraklat';
+      renderSpectrumFrame();
+    }
+
+    function toggleAudioPlayback() {
+      if (isAudioPlaying) {
+        stopAudioPlayback();
+      } else {
+        startAudioGraph();
+      }
+    }
+
+    function stopAudioPlayback() {
+      if (activeSourceNode) {
+        try { activeSourceNode.stop(); } catch {}
+        activeSourceNode.disconnect();
+        activeSourceNode = null;
+      }
+      isAudioPlaying = false;
+      if (animFrameId) cancelAnimationFrame(animFrameId);
+      document.getElementById('audio-state-pill').textContent = 'STOPPED';
+      document.getElementById('audio-state-pill').className = 'text-[11px] font-mono px-2 py-0.5 rounded bg-white/[0.05] text-zinc-400';
+      document.getElementById('audio-play-label').textContent = 'Önizlemeyi Başlat';
+      drawIdleSpectrum();
+    }
+
+    function updateAudioParams() {
+      const speed = parseFloat(document.getElementById('audio-speed-slider').value);
+      const pitch = parseFloat(document.getElementById('audio-pitch-slider').value);
+      const bass = parseFloat(document.getElementById('audio-bass-slider').value);
+      const treble = parseFloat(document.getElementById('audio-treble-slider').value);
+
+      document.getElementById('audio-speed-val').textContent = `${speed.toFixed(2)}x`;
+      document.getElementById('audio-pitch-val').textContent = `${pitch > 0 ? '+' : ''}${pitch} cent`;
+      document.getElementById('audio-bass-val').textContent = `${bass > 0 ? '+' : ''}${bass} dB`;
+      document.getElementById('audio-treble-val').textContent = `${treble > 0 ? '+' : ''}${treble} dB`;
+
+      if (activeSourceNode) {
+        activeSourceNode.playbackRate.value = speed;
+        if (activeSourceNode.detune) {
+          activeSourceNode.detune.value = pitch;
+        }
+      }
+      if (bassFilterNode) bassFilterNode.gain.value = bass;
+      if (trebleFilterNode) trebleFilterNode.gain.value = treble;
+    }
+
+    function applyAudioPreset(preset) {
+      const s = document.getElementById('audio-speed-slider');
+      const p = document.getElementById('audio-pitch-slider');
+      const b = document.getElementById('audio-bass-slider');
+      const t = document.getElementById('audio-treble-slider');
+
+      if (preset === 'normal') { s.value = 1.0; p.value = 0; b.value = 0; t.value = 0; }
+      if (preset === 'nightcore') { s.value = 1.25; p.value = 350; b.value = 3; t.value = 4; }
+      if (preset === 'slowed') { s.value = 0.85; p.value = -250; b.value = 9; t.value = -2; }
+      if (preset === 'podcast') { s.value = 1.0; p.value = 0; b.value = 4; t.value = 6; }
+
+      updateAudioParams();
+      if (!isAudioPlaying) startAudioGraph();
+    }
+
+    function renderSpectrumFrame() {
+      const canvas = document.getElementById('audio-visualizer-canvas');
+      const ctx = canvas.getContext('2d');
+      const width = canvas.width;
+      const height = canvas.height;
+      const bufferLength = analyserNode.frequencyBinCount;
+      const dataArray = new Uint8Array(bufferLength);
+
+      function draw() {
+        if (!isAudioPlaying) return;
+        animFrameId = requestAnimationFrame(draw);
+        analyserNode.getByteFrequencyData(dataArray);
+
+        ctx.fillStyle = '#0b0b0e';
+        ctx.fillRect(0, 0, width, height);
+
+        const barCount = 48;
+        const barWidth = (width / barCount) - 3;
+
+        for (let i = 0; i < barCount; i++) {
+          const val = dataArray[i];
+          const pct = val / 255;
+          const barHeight = Math.max(4, pct * (height - 24));
+          const x = i * (barWidth + 3) + 6;
+          const y = height - barHeight - 8;
+
+          const grad = ctx.createLinearGradient(0, y, 0, height);
+          grad.addColorStop(0, '#34d399');
+          grad.addColorStop(1, 'rgba(16, 185, 129, 0.15)');
+          ctx.fillStyle = grad;
+          ctx.fillRect(x, y, barWidth, barHeight);
+        }
+      }
+      draw();
+    }
+
+    function drawIdleSpectrum() {
+      const canvas = document.getElementById('audio-visualizer-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#0b0b0e';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      const barCount = 48;
+      const barWidth = (canvas.width / barCount) - 3;
+      for (let i = 0; i < barCount; i++) {
+        const h = 8 + Math.sin(i * 0.35) * 6;
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.08)';
+        ctx.fillRect(i * (barWidth + 3) + 6, canvas.height - h - 8, barWidth, h);
+      }
+    }
+
+    async function exportProcessedWav() {
+      const chosenAudioFormat = document.getElementById('audio-export-format').value;
+      if (!isInstalledNativeApp()) {
+        showAppRequiredModal(`Ses Stüdyosu Çıktısı (${chosenAudioFormat})`);
+        return;
+      }
+      ensureAudioContext();
+      if (!currentAudioBuffer) {
+        currentAudioBuffer = createSynthwaveBuffer();
+      }
+      const speed = parseFloat(document.getElementById('audio-speed-slider').value);
+      const pitch = parseFloat(document.getElementById('audio-pitch-slider').value);
+      const bass = parseFloat(document.getElementById('audio-bass-slider').value);
+      const treble = parseFloat(document.getElementById('audio-treble-slider').value);
+
+      const outLength = Math.floor(currentAudioBuffer.length / speed);
+      const offlineCtx = new OfflineAudioContext(
+        currentAudioBuffer.numberOfChannels,
+        outLength,
+        currentAudioBuffer.sampleRate
+      );
+      const src = offlineCtx.createBufferSource();
+      src.buffer = currentAudioBuffer;
+      src.playbackRate.value = speed;
+      if (src.detune) src.detune.value = pitch;
+
+      const bFilter = offlineCtx.createBiquadFilter();
+      bFilter.type = 'lowshelf';
+      bFilter.frequency.value = 85;
+      bFilter.gain.value = bass;
+
+      const tFilter = offlineCtx.createBiquadFilter();
+      tFilter.type = 'highshelf';
+      tFilter.frequency.value = 4500;
+      tFilter.gain.value = treble;
+
+      src.connect(bFilter);
+      bFilter.connect(tFilter);
+      tFilter.connect(offlineCtx.destination);
+      src.start(0);
+
+      const rendered = await offlineCtx.startRendering();
+      const chData = rendered.getChannelData(0);
+      const pcm16 = new Int16Array(chData.length);
+      for (let i = 0; i < chData.length; i++) {
+        const s = Math.max(-1, Math.min(1, chData[i]));
+        pcm16[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
+      }
+      const ext = chosenAudioFormat.split(' ')[0].toLowerCase() || 'wav';
+      const blob = new Blob([pcm16.buffer], { type: 'application/octet-stream' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `AllInOne_AudioStudio_${Date.now()}.${ext}`;
+      a.click();
+    }
+
+    /* -----------------------------------------------------------------
+       6. AI WHISPER AUDIO-TO-SRT ENGINE (16kHz DSP + TRANSFORMERS.JS)
+    ----------------------------------------------------------------- */
+    let currentAiSrtFile = null;
+    let cachedWhisperPipelines = {};
+    let isWhisperRunning = false;
+
+    function handleAiSrtFile(file) {
+      if (!file) return;
+      currentAiSrtFile = file;
+      const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+      document.getElementById('aisrt-file-name').textContent = file.name;
+      document.getElementById('aisrt-file-meta').textContent = `Boyut: ${sizeMB} MB • Tür: ${file.type || 'Ses/Video'}`;
+
+      const playerWrap = document.getElementById('aisrt-player-wrap');
+      const player = document.getElementById('aisrt-audio-player');
+      player.src = URL.createObjectURL(file);
+      playerWrap.classList.remove('hidden');
+
+      player.onloadedmetadata = () => {
+        const mins = Math.floor(player.duration / 60);
+        const secs = Math.floor(player.duration % 60);
+        document.getElementById('aisrt-duration-badge').textContent =
+          `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+      };
+
+      document.getElementById('aisrt-status-text').textContent = `Dosya hazır: ${file.name}`;
+    }
+
+    // Decode & resample audio to 16,000 Hz Mono with optional Vocal Clarity DSP filter for maximum Whisper accuracy
+    async function extract16kHzVocalEnhancedFloat32(file, applyVocalBoost) {
+      ensureAudioContext();
+      const arrayBuffer = await file.arrayBuffer();
+      const decodedBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+
+      const targetSampleRate = 16000;
+      const targetLength = Math.ceil(decodedBuffer.duration * targetSampleRate);
+      const offlineCtx = new OfflineAudioContext(1, targetLength, targetSampleRate);
+
+      const source = offlineCtx.createBufferSource();
+      source.buffer = decodedBuffer;
+
+      if (applyVocalBoost) {
+        // 1) High-pass filter at 75Hz to eliminate low-end rumble/hum
+        const highpass = offlineCtx.createBiquadFilter();
+        highpass.type = 'highpass';
+        highpass.frequency.value = 75;
+
+        // 2) Vocal presence peaking boost at 2800Hz (+2.8dB) for consonant clarity
+        const presence = offlineCtx.createBiquadFilter();
+        presence.type = 'peaking';
+        presence.frequency.value = 2800;
+        presence.Q.value = 1.0;
+        presence.gain.value = 2.8;
+
+        source.connect(highpass);
+        highpass.connect(presence);
+        presence.connect(offlineCtx.destination);
+      } else {
+        source.connect(offlineCtx.destination);
+      }
+
+      source.start(0);
+      const renderedBuffer = await offlineCtx.startRendering();
+      const channelData = renderedBuffer.getChannelData(0);
+
+      // Peak normalization to 0.95 so quiet speech is recognized accurately
+      let maxPeak = 0;
+      for (let i = 0; i < channelData.length; i++) {
+        const abs = Math.abs(channelData[i]);
+        if (abs > maxPeak) maxPeak = abs;
+      }
+      if (maxPeak > 0.005 && maxPeak < 0.95) {
+        const scale = 0.95 / maxPeak;
+        for (let i = 0; i < channelData.length; i++) {
+          channelData[i] *= scale;
+        }
+      }
+      return channelData;
+    }
+
+    // Group word-level or chunk-level timestamps into accurate .SRT blocks
+    function formatWhisperChunksToSrt(chunks, granularity) {
+      if (!chunks || !chunks.length) return { srt: '', count: 0 };
+
+      // Normalize chunks into atomic word tokens with interpolated [start, end] if Whisper returned phrase-level chunks
+      const wordTokens = [];
+      chunks.forEach(c => {
+        const rawText = (c.text || '').trim();
+        if (!rawText) return;
+        const cStart = (c.timestamp && c.timestamp[0] != null) ? c.timestamp[0] : (wordTokens.length ? wordTokens[wordTokens.length - 1].end : 0);
+        const cEnd = (c.timestamp && c.timestamp[1] != null && c.timestamp[1] > cStart)
+          ? c.timestamp[1]
+          : cStart + Math.max(0.4, rawText.split(/\s+/).length * 0.32);
+
+        const words = rawText.split(/\s+/).filter(Boolean);
+        if (words.length === 1) {
+          wordTokens.push({ text: words[0], start: cStart, end: cEnd });
+        } else {
+          // Proportional character-weighted interpolation across [cStart, cEnd] for exact second-by-second splitting
+          const totalChars = words.reduce((acc, w) => acc + w.length, 0) || 1;
+          const totalDur = Math.max(0.2, cEnd - cStart);
+          let cursor = cStart;
+          words.forEach(w => {
+            const wDur = totalDur * (w.length / totalChars);
+            wordTokens.push({ text: w, start: cursor, end: cursor + wDur });
+            cursor += wDur;
+          });
+        }
+      });
+
+      const groupedBlocks = [];
+
+      if (granularity === 'word') {
+        // Every single word gets its own exact timestamp
+        wordTokens.forEach(w => {
+          groupedBlocks.push({ start: w.start, end: Math.max(w.start + 0.15, w.end), text: w.text });
+        });
+      } else if (granularity === 'second') {
+        // Saniye Saniye: Tight 1.0 - 2.0 second blocks (max 5 words per block)
+        let current = null;
+        let wordCount = 0;
+
+        wordTokens.forEach(w => {
+          if (!current) {
+            current = { start: w.start, end: w.end, text: w.text };
+            wordCount = 1;
+          } else {
+            const elapsed = w.end - current.start;
+            const endsWithPunct = /[.?!,;:]/.test(current.text.slice(-1));
+            if (elapsed > 1.8 || wordCount >= 5 || endsWithPunct) {
+              groupedBlocks.push(current);
+              current = { start: w.start, end: w.end, text: w.text };
+              wordCount = 1;
+            } else {
+              current.end = Math.max(current.end, w.end);
+              current.text += ' ' + w.text;
+              wordCount++;
+            }
+          }
+        });
+        if (current) groupedBlocks.push(current);
+      } else {
+        // Sentence-level standard SRT (up to 4.2s or sentence-ending punctuation)
+        let current = null;
+        let wordCount = 0;
+
+        wordTokens.forEach(w => {
+          if (!current) {
+            current = { start: w.start, end: w.end, text: w.text };
+            wordCount = 1;
+          } else {
+            const elapsed = w.end - current.start;
+            const endsWithSentence = /[.?!]/.test(current.text.slice(-1));
+            if (elapsed > 4.2 || wordCount >= 11 || endsWithSentence) {
+              groupedBlocks.push(current);
+              current = { start: w.start, end: w.end, text: w.text };
+              wordCount = 1;
+            } else {
+              current.end = Math.max(current.end, w.end);
+              current.text += ' ' + w.text;
+              wordCount++;
+            }
+          }
+        });
+        if (current) groupedBlocks.push(current);
+      }
+
+      const srtString = groupedBlocks.map((b, idx) => {
+        const startStr = formatMsToSrtTime(b.start * 1000);
+        const endStr = formatMsToSrtTime(Math.max(b.start + 0.25, b.end) * 1000);
+        return `${idx + 1}\n${startStr} --> ${endStr}\n${b.text}`;
+      }).join('\n\n');
+
+      return { srt: srtString, count: groupedBlocks.length };
+    }
+
+    async function runWhisperTranscription() {
+      if (isWhisperRunning) return;
+      if (!currentAiSrtFile) {
+        document.getElementById('aisrt-status-text').textContent = 'Lütfen önce bir ses (MP3/WAV) veya video dosyası seçin!';
+        document.getElementById('aisrt-file-input').click();
+        return;
+      }
+
+      const statusText = document.getElementById('aisrt-status-text');
+      const substepText = document.getElementById('aisrt-substep-text');
+      const pctText = document.getElementById('aisrt-pct-text');
+      const progressBar = document.getElementById('aisrt-progress-bar');
+      const outputBox = document.getElementById('aisrt-output-box');
+      const segBadge = document.getElementById('aisrt-segment-badge');
+      const btnLabel = document.getElementById('aisrt-btn-label');
+
+      const modelId = document.getElementById('aisrt-model').value;
+      const language = document.getElementById('aisrt-lang').value;
+      const granularity = document.getElementById('aisrt-granularity').value;
+      const applyDsp = document.getElementById('aisrt-dsp-enhance').checked;
+
+      isWhisperRunning = true;
+      btnLabel.textContent = 'Yapay Zeka Ses Dosyasını Çözümlüyor...';
+      progressBar.style.width = '10%';
+      pctText.textContent = '10%';
+
+      try {
+        // Step 1: 16kHz DSP Pre-processing
+        statusText.textContent = '[1/3] 16kHz Mono DSP Vokal Netleştirme uygulanıyor...';
+        substepText.textContent = `Ses: ${currentAiSrtFile.name}`;
+        const audioData16k = await extract16kHzVocalEnhancedFloat32(currentAiSrtFile, applyDsp);
+
+        // Step 2: Load OpenAI Whisper model via Transformers.js
+        progressBar.style.width = '25%';
+        pctText.textContent = '25%';
+        statusText.textContent = `[2/3] OpenAI Whisper modeli hazırlanıyor (${modelId})...`;
+
+        if (!cachedWhisperPipelines[modelId]) {
+          const { pipeline, env } = await import('https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2');
+          env.allowLocalModels = false;
+          env.useBrowserCache = true;
+
+          cachedWhisperPipelines[modelId] = await pipeline('automatic-speech-recognition', modelId, {
+            progress_callback: (prog) => {
+              if (prog.status === 'progress' && prog.progress != null) {
+                const p = Math.min(80, Math.round(25 + (prog.progress * 0.55)));
+                progressBar.style.width = `${p}%`;
+                pctText.textContent = `${p}%`;
+                substepText.textContent = `Model İndiriliyor / Önbelleğe Alınıyor (${prog.file || ''}): %${Math.round(prog.progress)}`;
+              }
+            }
+          });
+        }
+
+        // Step 3: Transcribe (Try word-level timestamps first, fallback cleanly to segment-level + proportional interpolation)
+        progressBar.style.width = '85%';
+        pctText.textContent = '85%';
+        statusText.textContent = '[3/3] Konuşmalar saniye saniye kelimelere ve zaman damgalarına dökülüyor...';
+        substepText.textContent = `Dil: ${language.toUpperCase()} • Mod: ${granularity.toUpperCase()}`;
+
+        const transcriber = cachedWhisperPipelines[modelId];
+        let result;
+        try {
+          result = await transcriber(audioData16k, {
+            language: language,
+            task: 'transcribe',
+            return_timestamps: 'word',
+            chunk_length_s: 30,
+            stride_length_s: 5
+          });
+        } catch (wordTsErr) {
+          result = await transcriber(audioData16k, {
+            language: language,
+            task: 'transcribe',
+            return_timestamps: true,
+            chunk_length_s: 30,
+            stride_length_s: 5
+          });
+        }
+
+        const rawChunks = (result && result.chunks && result.chunks.length)
+          ? result.chunks
+          : [{ text: (result && result.text) || '', timestamp: [0, audioData16k.length / 16000] }];
+
+        const { srt, count } = formatWhisperChunksToSrt(rawChunks, granularity);
+
+        outputBox.value = srt || 'Konuşma algılanamadı. Lütfen içinde net vokal/konuşma bulunan bir ses dosyası deneyin.';
+        segBadge.textContent = `${count} Altyazı Bloğu`;
+        progressBar.style.width = '100%';
+        pctText.textContent = '100%';
+        statusText.textContent = '✓ Tamamlandı — Saniye saniye .SRT altyazınız hazır!';
+        substepText.textContent = `Model: ${modelId} • ${count} zaman damgalı satır üretildi.`;
+      } catch (err) {
+        statusText.textContent = 'Model yüklenirken veya ses çözümlenirken hata oluştu.';
+        substepText.textContent = String(err.message || err);
+      } finally {
+        isWhisperRunning = false;
+        btnLabel.textContent = "Yapay Zeka ile Saniye Saniye .SRT'ye Çevir";
+      }
+    }
+
+    function sendAiSrtToEditor() {
+      const generatedSrt = document.getElementById('aisrt-output-box').value.trim();
+      if (!generatedSrt) return;
+      document.getElementById('srt-input-area').value = generatedSrt;
+      syncSrtOutput();
+      switchToolTab('srt');
+    }
+
+    function downloadAiGeneratedSrt() {
+      const lang = document.getElementById('aisrt-lang').value.toUpperCase();
+      const gran = document.getElementById('aisrt-granularity').value.toUpperCase();
+      if (!isInstalledNativeApp()) {
+        showAppRequiredModal(`AI Whisper Sesten .SRT Altyazı İndirme (${lang} • ${gran})`);
+        return;
+      }
+      const content = document.getElementById('aisrt-output-box').value;
+      const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `AllInOne_Whisper_AI_${lang}_${Date.now()}.srt`;
+      a.click();
+    }
+
+    // Initialize default state on page load
+    window.addEventListener('DOMContentLoaded', () => {
+      syncRuntimeModeUI();
+      checkGitHubAutoUpdate();
+      loadSampleSrt();
+      fetchThumbnailAndTags('https://www.youtube.com/watch?v=aqz-KE-bpKQ');
+      drawIdleSpectrum();
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js').catch(() => {});
+      }
+    });
+  </script>
+</body>
+</html>

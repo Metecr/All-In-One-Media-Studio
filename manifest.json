@@ -1,0 +1,18 @@
+{
+  "name": "All In One — Media Studio",
+  "short_name": "All In One",
+  "description": "All In One Video & Ses İndirici, Medya Dönüştürücü, 4K Thumbnail, SRT Stüdyosu, Ses Efekti ve Yapay Zeka Sesten .SRT Üretici",
+  "start_url": "./index.html?app=1",
+  "display": "standalone",
+  "background_color": "#070709",
+  "theme_color": "#10b981",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%230b0b0e'/><text x='50' y='66' font-size='50' text-anchor='middle' fill='%2310b981' font-family='monospace'>▶</text></svg>",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
