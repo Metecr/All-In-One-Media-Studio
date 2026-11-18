@@ -1,5 +1,5 @@
 // All In One — Hardened Auto-Updating Service Worker (Same-Origin Only)
-const CACHE_NAME = 'all-in-one-studio-v2';
+const CACHE_NAME = 'all-in-one-studio-v3';
 
 self.addEventListener('install', () => {
   self.skipWaiting();
